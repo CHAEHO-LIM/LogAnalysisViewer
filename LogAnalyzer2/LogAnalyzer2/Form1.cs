@@ -95,6 +95,7 @@ namespace LogAnalyzer2
 
         private InputParam GetInputParam()
         {
+            //test
             InputParam param = new InputParam();
             param.strDateTimePickerFrom = this.dateTimePickerFrom.Value.ToString("yyyy-MM-dd").Substring(0, 10);
             param.strDateTimePickerTo = this.dateTimePickerTo.Value.ToString("yyyy-MM-dd").Substring(0, 10);
