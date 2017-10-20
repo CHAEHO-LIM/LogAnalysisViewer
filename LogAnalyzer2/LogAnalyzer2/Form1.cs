@@ -96,8 +96,8 @@ namespace LogAnalyzer2
         private InputParam GetInputParam()
         {
             InputParam param = new InputParam();
-            param.strDateTimePickerFrom = this.dateTimePickerFrom.Value.ToString().Substring(0, 10);
-            param.strDateTimePickerTo = this.dateTimePickerTo.Value.ToString().Substring(0, 10);
+            param.strDateTimePickerFrom = this.dateTimePickerFrom.Value.ToString("yyyy-MM-dd").Substring(0, 10);
+            param.strDateTimePickerTo = this.dateTimePickerTo.Value.ToString("yyyy-MM-dd").Substring(0, 10);
             param.strProductName = this.comboBoxProduct.SelectedItem.ToString();
             param.strCountry = this.comboBoxCountry.SelectedItem.ToString();
             param.progressBar = this.progressBar1;
