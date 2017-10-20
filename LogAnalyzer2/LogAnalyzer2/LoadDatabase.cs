@@ -104,6 +104,15 @@ namespace LogAnalyzer2
                 MessageBox.Show(ex.Message);
                 return false;
             }
+/*
+            // ローカル開発用に機能ログ保存
+            string strFilePath = Application.StartupPath + "\\V_TB_LOG_List.xml";
+
+            XmlSerializer serializer = new XmlSerializer(typeof(List<TB_Log_T>));
+            FileStream fs = new FileStream(strFilePath, FileMode.Create);
+            serializer.Serialize(fs, DatabasePool.Instance.TB_Log_List);
+            fs.Close();
+*/
             return (DatabasePool.Instance.TB_Log_List.Count > 0);
         }
 
@@ -174,6 +183,16 @@ namespace LogAnalyzer2
                 MessageBox.Show(ex.Message);
                 return false;
             }
+/*
+            // ローカル開発用に使用ログ保存
+            string strFilePath = Application.StartupPath + "\\V_MidasUpdate_List.xml";
+
+            XmlSerializer serializer = new XmlSerializer(typeof(List<MidasUpdate_nIP_T>));
+            FileStream fs = new FileStream(strFilePath, FileMode.Create);
+            serializer.Serialize(fs, DatabasePool.Instance.MidasUpdate_nIP_List);
+            fs.Close();
+*/
+
             return (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0);
         }
 
@@ -388,7 +407,7 @@ namespace LogAnalyzer2
                         data.Area_code = rdr["area_code"].ToString();
 
                         string pattern = "yyyy-MM-dd tt h:m:s";
-                        string pattern2 = "yyyy/MM/dd h:m:s";
+                        string pattern2 = "yyyy/MM/dd H:m:s";
 
                         DateTime parsedDate;
                         string strTimme = rdr["regist_datetime"].ToString();
@@ -493,7 +512,7 @@ namespace LogAnalyzer2
                         data.Area_code = rdr["area_code"].ToString();
 
                         string pattern = "yyyy-MM-dd tt h:m:s";
-                        string pattern2 = "yyyy/MM/dd h:m:s";
+                        string pattern2 = "yyyy/MM/dd H:m:s";
 
                         DateTime parsedDate;
                         string strTimme = rdr["regist_datetime"].ToString();
