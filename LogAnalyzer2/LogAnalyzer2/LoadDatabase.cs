@@ -71,7 +71,9 @@ namespace LogAnalyzer2
                         TB_Log_T data = new TB_Log_T();
                         data.Idx = rdr["idx"].ToString();
                         data.DSDate = rdr["dSDate"].ToString();
+                        data.DSDate = data.DSDate.Replace("/", "-");
                         data.DEDate = rdr["dEDate"].ToString();
+                        data.DEDate = data.DEDate.Replace("/", "-");
                         data.StrLogCode = rdr["strLogCode"].ToString();
                         data.StrLogString = rdr["strLogString"].ToString();
                         data.IdxRealConn = rdr["idxRealConn"].ToString();
@@ -137,6 +139,7 @@ namespace LogAnalyzer2
                     {
                         MidasUpdate_nIP_T data = new MidasUpdate_nIP_T();
                         data.Regdate = rdr["regdate"].ToString();
+                        data.Regdate = data.Regdate.Replace("/", "-");
                         data.Index_id = rdr["index_id"].ToString();
                         data.ClientV = rdr["ClientV"].ToString();
                         data.ClientIP = rdr["clientIP"].ToString();
@@ -385,6 +388,7 @@ namespace LogAnalyzer2
                         data.Area_code = rdr["area_code"].ToString();
 
                         string pattern = "yyyy-MM-dd tt h:m:s";
+                        string pattern2 = "yyyy/MM/dd h:m:s";
 
                         DateTime parsedDate;
                         string strTimme = rdr["regist_datetime"].ToString();
@@ -393,7 +397,14 @@ namespace LogAnalyzer2
                         else
                         {
                             if (strTimme != string.Empty)
-                                Debug.Assert(false, "Parsing出来ない文字があります。");
+                            {
+                                if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                    data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                                else
+                                {
+                                    Debug.Assert(false, "Parsing出来ない文字があります。");
+                                }
+                            }
                         }
 
                         strTimme = rdr["update_datetime"].ToString();
@@ -402,7 +413,14 @@ namespace LogAnalyzer2
                         else
                         {
                             if (strTimme != string.Empty)
-                                Debug.Assert(false, "Parsing出来ない文字があります。");
+                            {
+                                if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                    data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                                else
+                                {
+                                    Debug.Assert(false, "Parsing出来ない文字があります。");
+                                }
+                            }
                         }
 
                         memberList.Add(data);
@@ -475,6 +493,7 @@ namespace LogAnalyzer2
                         data.Area_code = rdr["area_code"].ToString();
 
                         string pattern = "yyyy-MM-dd tt h:m:s";
+                        string pattern2 = "yyyy/MM/dd h:m:s";
 
                         DateTime parsedDate;
                         string strTimme = rdr["regist_datetime"].ToString();
@@ -484,7 +503,14 @@ namespace LogAnalyzer2
                         else
                         {
                             if (strTimme != string.Empty)
-                                Debug.Assert(false, "Parsing出来ない文字があります。");
+                            {
+                                if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                    data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                                else
+                                {
+                                    Debug.Assert(false, "Parsing出来ない文字があります。");
+                                }
+                            }
                         }
 
                         strTimme = rdr["update_datetime"].ToString();
@@ -493,7 +519,14 @@ namespace LogAnalyzer2
                         else
                         {
                             if (strTimme != string.Empty)
-                                Debug.Assert(false, "Parsing出来ない文字があります。");
+                            {
+                                if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                    data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                                else
+                                {
+                                    Debug.Assert(false, "Parsing出来ない文字があります。");
+                                }
+                            }
                         }
 
                         memberList.Add(data);
