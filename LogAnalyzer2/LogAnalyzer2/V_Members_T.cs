@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Web;
+
 namespace LogAnalyzer2
 {
     public class V_Members_T
@@ -73,7 +75,8 @@ namespace LogAnalyzer2
         public string Enterprise_name
         {
             get { return _enterprise_name; }
-            set { _enterprise_name = value; }
+            set { _enterprise_name = HttpUtility.HtmlDecode(value); }
+//            set { _enterprise_name = value; }
         }
         public string Department_name
         {
