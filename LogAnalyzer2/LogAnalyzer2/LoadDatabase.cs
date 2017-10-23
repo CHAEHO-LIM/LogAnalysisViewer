@@ -45,64 +45,79 @@ namespace LogAnalyzer2
         {
             DatabasePool.Instance.TB_Log_List.Clear();
 
-            string dayFrom = _inputParam.strDateTimePickerFrom;
-            string dayTo = _inputParam.strDateTimePickerTo;
-            string strLangCode = GetStrLangCode();
-            string strProgCode = GetStrProgCode();
-
-            string quary = string.Format("SELECT * FROM TB_Log WHERE strLangCode='{0}' AND strProgCode='{1}' AND dSDate>='{2}' AND dSDate<='{3}' ORDER BY dSDate ASC;", strLangCode, strProgCode, dayFrom, dayTo);
-
-            try
+            if (Constants.FLG_LOCAL)
             {
-                string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2", 
-                    CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
-                using (SqlConnection conn = new SqlConnection(strConn))
+                string strFilePath = Application.StartupPath + "\\V_TB_LOG_List.xml";
+                double dFromTimestamp = 0;
+
+                if (File.Exists(strFilePath) == true)
                 {
-                    conn.Open();
-                    this._inputParam.progressBar.PerformStep();
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.Connection = conn;
-                    cmd.CommandText = quary;
-                    SqlDataReader rdr = cmd.ExecuteReader();
-                    this._inputParam.progressBar.PerformStep();
-
-                    while (rdr.Read())
-                    {
-                        TB_Log_T data = new TB_Log_T();
-                        data.Idx = rdr["idx"].ToString();
-                        data.DSDate = rdr["dSDate"].ToString();
-                        data.DSDate = data.DSDate.Replace("/", "-");
-                        data.DEDate = rdr["dEDate"].ToString();
-                        data.DEDate = data.DEDate.Replace("/", "-");
-                        data.StrLogCode = rdr["strLogCode"].ToString();
-                        data.StrLogString = rdr["strLogString"].ToString();
-                        data.IdxRealConn = rdr["idxRealConn"].ToString();
-                        data.StrCMD = rdr["strCMD"].ToString();
-                        data.StrID = rdr["strID"].ToString();
-                        data.StrPWD = rdr["strPWD"].ToString();
-                        data.StrIP = rdr["strIP"].ToString();
-                        data.StrMac = rdr["strMac"].ToString();
-                        data.StrPID = rdr["strPID"].ToString();
-                        data.StrLangCode = rdr["strLangCode"].ToString();
-                        data.StrProgCode = rdr["strProgCode"].ToString();
-                        data.StrVersion = rdr["strVersion"].ToString();
-                        data.NUseOpt = rdr["nUseOpt"].ToString();
-                        data.NUseOpt2 = rdr["nUseOpt2"].ToString();
-                        data.NUseOpt3 = rdr["nUseOpt3"].ToString();
-                        data.NUseOpt4 = rdr["nUseOpt4"].ToString();
-                        data.NNationalOpt = rdr["nNationalOpt"].ToString();
-                        data.StrProtectKey = rdr["strProtectKey"].ToString();
-
-                        DatabasePool.Instance.TB_Log_List.Add(data);
-                    }
-
-                    this._inputParam.progressBar.PerformStep();
+                    if (LoadV_TB_LOG_Table_XML(strFilePath, ref dFromTimestamp) == false)
+                        return false;
                 }
+
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message);
-                return false;
+                string dayFrom = _inputParam.strDateTimePickerFrom;
+                string dayTo = _inputParam.strDateTimePickerTo;
+                string strLangCode = GetStrLangCode();
+                string strProgCode = GetStrProgCode();
+
+                string quary = string.Format("SELECT * FROM TB_Log WHERE strLangCode='{0}' AND strProgCode='{1}' AND dSDate>='{2}' AND dSDate<='{3}' ORDER BY dSDate ASC;", strLangCode, strProgCode, dayFrom, dayTo);
+
+                try
+                {
+                    string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
+                        CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
+                    using (SqlConnection conn = new SqlConnection(strConn))
+                    {
+                        conn.Open();
+                        this._inputParam.progressBar.PerformStep();
+                        SqlCommand cmd = new SqlCommand();
+                        cmd.Connection = conn;
+                        cmd.CommandText = quary;
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        this._inputParam.progressBar.PerformStep();
+
+                        while (rdr.Read())
+                        {
+                            TB_Log_T data = new TB_Log_T();
+                            data.Idx = rdr["idx"].ToString();
+                            data.DSDate = rdr["dSDate"].ToString();
+                            data.DSDate = data.DSDate.Replace("/", "-");
+                            data.DEDate = rdr["dEDate"].ToString();
+                            data.DEDate = data.DEDate.Replace("/", "-");
+                            data.StrLogCode = rdr["strLogCode"].ToString();
+                            data.StrLogString = rdr["strLogString"].ToString();
+                            data.IdxRealConn = rdr["idxRealConn"].ToString();
+                            data.StrCMD = rdr["strCMD"].ToString();
+                            data.StrID = rdr["strID"].ToString();
+                            data.StrPWD = rdr["strPWD"].ToString();
+                            data.StrIP = rdr["strIP"].ToString();
+                            data.StrMac = rdr["strMac"].ToString();
+                            data.StrPID = rdr["strPID"].ToString();
+                            data.StrLangCode = rdr["strLangCode"].ToString();
+                            data.StrProgCode = rdr["strProgCode"].ToString();
+                            data.StrVersion = rdr["strVersion"].ToString();
+                            data.NUseOpt = rdr["nUseOpt"].ToString();
+                            data.NUseOpt2 = rdr["nUseOpt2"].ToString();
+                            data.NUseOpt3 = rdr["nUseOpt3"].ToString();
+                            data.NUseOpt4 = rdr["nUseOpt4"].ToString();
+                            data.NNationalOpt = rdr["nNationalOpt"].ToString();
+                            data.StrProtectKey = rdr["strProtectKey"].ToString();
+
+                            DatabasePool.Instance.TB_Log_List.Add(data);
+                        }
+
+                        this._inputParam.progressBar.PerformStep();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
             }
 /*
             // ローカル開発用に機能ログ保存
@@ -116,72 +131,116 @@ namespace LogAnalyzer2
             return (DatabasePool.Instance.TB_Log_List.Count > 0);
         }
 
-        private bool GetDatabaseMidasUpdate_nIP()
+        private bool LoadV_TB_LOG_Table_XML(string strFilePath, ref double dFromTimestamp)
         {
-            DatabasePool.Instance.MidasUpdate_nIP_List.Clear();
-
-            string dayFrom = _inputParam.strDateTimePickerFrom;
-            string dayTo = _inputParam.strDateTimePickerTo;
-            int nProductNum = GetProductNum();
-            int nLangageNum = GetLangageNum();
-
-            if (nProductNum == 0 || nLangageNum == 0)
-                return false;
-
-            string quary = string.Format("SELECT * FROM MidasUpdate_nIP WHERE nProduct='{0}' AND nLang='{1}' AND regdate>='{2}' AND regdate<='{3}' ORDER BY regdate ASC;", nProductNum, nLangageNum, dayFrom, dayTo);
-
             try
             {
-                string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = intra",
-                    CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
-                using (SqlConnection conn = new SqlConnection(strConn))
-                {
-                    conn.Open();
-                    this._inputParam.progressBar.PerformStep();
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.Connection = conn;
-                    cmd.CommandText = quary;
-                    SqlDataReader rdr = cmd.ExecuteReader();
-                    this._inputParam.progressBar.PerformStep();
-
-                    while (rdr.Read())
-                    {
-                        MidasUpdate_nIP_T data = new MidasUpdate_nIP_T();
-                        data.Regdate = rdr["regdate"].ToString();
-                        data.Regdate = data.Regdate.Replace("/", "-");
-                        data.Index_id = rdr["index_id"].ToString();
-                        data.ClientV = rdr["ClientV"].ToString();
-                        data.ClientIP = rdr["clientIP"].ToString();
-                        data.ServerIP = rdr["serverIP"].ToString();
-                        data.NProduct = rdr["nProduct"].ToString();
-                        data.NBuildNum = rdr["nBuildNum"].ToString();
-                        data.NLang = rdr["nLang"].ToString();
-                        data.NVer1 = rdr["nVer1"].ToString();
-                        data.NVer2 = rdr["nVer2"].ToString();
-                        data.NVer3 = rdr["nVer3"].ToString();
-                        data.NLic1 = rdr["nLic1"].ToString();
-                        data.NLic2 = rdr["nLic2"].ToString();
-                        data.NLic3 = rdr["nLic3"].ToString();
-                        data.NCRKC = rdr["nCRKC"].ToString();
-                        data.StrLKNum = rdr["strLKNum"].ToString();
-                        data.Chk_client = rdr["chk_client"].ToString();
-                        data.StrName = rdr["strName"].ToString();
-                        data.StrCountry = rdr["strCountry"].ToString();
-                        data.TxtWhois = rdr["txtWhois"].ToString();
-                        data.StrMussID = rdr["strMussID"].ToString();
-                        data.ExtLod = rdr["ExtLod"].ToString();
-                        data.PLFInfo = rdr["PLFInfo"].ToString();
-                        data.ULog = rdr["ULog"].ToString();
-
-                        DatabasePool.Instance.MidasUpdate_nIP_List.Add(data);
-                    }
-                    this._inputParam.progressBar.PerformStep();
-                }
+                XmlSerializer deSerializer = new XmlSerializer(typeof(List<TB_Log_T>));
+                StreamReader reader = new StreamReader(strFilePath);
+                DatabasePool.Instance.TB_Log_List = (List<TB_Log_T>)deSerializer.Deserialize(reader);
+                this._inputParam.progressBar.PerformStep();
+                reader.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 return false;
+            }
+/*
+            if (DatabasePool.Instance.TB_Log_List.Count > 0)
+            {
+                string strTime = DatabasePool.Instance.TB_Log_List[DatabasePool.Instance.TB_Log_List.Count - 1].Regist_timestamp;
+
+                double dVal = 0;
+                if (double.TryParse(strTime, out dVal) == true)
+                    dFromTimestamp = dVal;
+            }
+*/
+            return (DatabasePool.Instance.TB_Log_List.Count > 0);
+        }
+
+        private bool GetDatabaseMidasUpdate_nIP()
+        {
+            DatabasePool.Instance.MidasUpdate_nIP_List.Clear();
+
+            if (Constants.FLG_LOCAL)
+            {
+                string strFilePath = Application.StartupPath + "\\V_MidasUpdate_List.xml";
+                double dFromTimestamp = 0;
+
+                if (File.Exists(strFilePath) == true)
+                {
+                    if (LoadV_MidasUpdate_Table_XML(strFilePath, ref dFromTimestamp) == false)
+                        return false;
+                }
+
+            }
+            else
+            {
+
+                string dayFrom = _inputParam.strDateTimePickerFrom;
+                string dayTo = _inputParam.strDateTimePickerTo;
+                int nProductNum = GetProductNum();
+                int nLangageNum = GetLangageNum();
+
+                if (nProductNum == 0 || nLangageNum == 0)
+                    return false;
+
+                string quary = string.Format("SELECT * FROM MidasUpdate_nIP WHERE nProduct='{0}' AND nLang='{1}' AND regdate>='{2}' AND regdate<='{3}' ORDER BY regdate ASC;", nProductNum, nLangageNum, dayFrom, dayTo);
+
+                try
+                {
+                    string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = intra",
+                        CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
+                    using (SqlConnection conn = new SqlConnection(strConn))
+                    {
+                        conn.Open();
+                        this._inputParam.progressBar.PerformStep();
+                        SqlCommand cmd = new SqlCommand();
+                        cmd.Connection = conn;
+                        cmd.CommandText = quary;
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        this._inputParam.progressBar.PerformStep();
+
+                        while (rdr.Read())
+                        {
+                            MidasUpdate_nIP_T data = new MidasUpdate_nIP_T();
+                            data.Regdate = rdr["regdate"].ToString();
+                            data.Regdate = data.Regdate.Replace("/", "-");
+                            data.Index_id = rdr["index_id"].ToString();
+                            data.ClientV = rdr["ClientV"].ToString();
+                            data.ClientIP = rdr["clientIP"].ToString();
+                            data.ServerIP = rdr["serverIP"].ToString();
+                            data.NProduct = rdr["nProduct"].ToString();
+                            data.NBuildNum = rdr["nBuildNum"].ToString();
+                            data.NLang = rdr["nLang"].ToString();
+                            data.NVer1 = rdr["nVer1"].ToString();
+                            data.NVer2 = rdr["nVer2"].ToString();
+                            data.NVer3 = rdr["nVer3"].ToString();
+                            data.NLic1 = rdr["nLic1"].ToString();
+                            data.NLic2 = rdr["nLic2"].ToString();
+                            data.NLic3 = rdr["nLic3"].ToString();
+                            data.NCRKC = rdr["nCRKC"].ToString();
+                            data.StrLKNum = rdr["strLKNum"].ToString();
+                            data.Chk_client = rdr["chk_client"].ToString();
+                            data.StrName = rdr["strName"].ToString();
+                            data.StrCountry = rdr["strCountry"].ToString();
+                            data.TxtWhois = rdr["txtWhois"].ToString();
+                            data.StrMussID = rdr["strMussID"].ToString();
+                            data.ExtLod = rdr["ExtLod"].ToString();
+                            data.PLFInfo = rdr["PLFInfo"].ToString();
+                            data.ULog = rdr["ULog"].ToString();
+
+                            DatabasePool.Instance.MidasUpdate_nIP_List.Add(data);
+                        }
+                        this._inputParam.progressBar.PerformStep();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
             }
 /*
             // ローカル開発用に使用ログ保存
@@ -193,6 +252,34 @@ namespace LogAnalyzer2
             fs.Close();
 */
 
+            return (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0);
+        }
+
+        private bool LoadV_MidasUpdate_Table_XML(string strFilePath, ref double dFromTimestamp)
+        {
+            try
+            {
+                XmlSerializer deSerializer = new XmlSerializer(typeof(List<MidasUpdate_nIP_T>));
+                StreamReader reader = new StreamReader(strFilePath);
+                DatabasePool.Instance.MidasUpdate_nIP_List = (List<MidasUpdate_nIP_T>)deSerializer.Deserialize(reader);
+                this._inputParam.progressBar.PerformStep();
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+            /*
+                        if (DatabasePool.Instance.TB_Log_List.Count > 0)
+                        {
+                            string strTime = DatabasePool.Instance.TB_Log_List[DatabasePool.Instance.TB_Log_List.Count - 1].Regist_timestamp;
+
+                            double dVal = 0;
+                            if (double.TryParse(strTime, out dVal) == true)
+                                dFromTimestamp = dVal;
+                        }
+            */
             return (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0);
         }
 
@@ -215,52 +302,55 @@ namespace LogAnalyzer2
                 
             }
 
-            List<V_Node_T> nodeList = new List<V_Node_T>();
-            double dNowTimestamp = ConvertToUnixTimestamp(DateTime.Now);
-
-            string quary = string.Format("SELECT * FROM V_Node WHERE regist_timestamp > '{0}' AND regist_timestamp <= '{1}' ORDER BY regist_timestamp ASC", dFromTimestamp, dNowTimestamp);
-
-            try
+            if (!Constants.FLG_LOCAL)
             {
-                string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
-                    CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
-                using (SqlConnection conn = new SqlConnection(strConn))
+                List<V_Node_T> nodeList = new List<V_Node_T>();
+                double dNowTimestamp = ConvertToUnixTimestamp(DateTime.Now);
+
+                string quary = string.Format("SELECT * FROM V_Node WHERE regist_timestamp > '{0}' AND regist_timestamp <= '{1}' ORDER BY regist_timestamp ASC", dFromTimestamp, dNowTimestamp);
+
+                try
                 {
-                    conn.Open();
-                    this._inputParam.progressBar.PerformStep();
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.Connection = conn;
-                    cmd.CommandText = quary;
-                    SqlDataReader rdr = cmd.ExecuteReader();
-                    this._inputParam.progressBar.PerformStep();
-
-                    while (rdr.Read())
+                    string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
+                        CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
+                    using (SqlConnection conn = new SqlConnection(strConn))
                     {
-                        V_Node_T data = new V_Node_T();
-                        data.Enterprise_code = rdr["enterprise_code"].ToString();
-                        data.Enterprise_name = rdr["enterprise_name"].ToString();
-                        data.Department_code = rdr["department_code"].ToString();
-                        data.Department_name = rdr["department_name"].ToString();
-                        data.Node_sn = rdr["node_sn"].ToString();
-                        data.Id = rdr["id"].ToString();
-                        data.Node_name = rdr["node_name"].ToString();
-                        data.Mac = rdr["mac"].ToString();
-                        data.Ip = rdr["ip"].ToString();
-                        data.Regist_timestamp = rdr["regist_timestamp"].ToString();
-                        data.Use_yn = rdr["use_yn"].ToString();
+                        conn.Open();
+                        this._inputParam.progressBar.PerformStep();
+                        SqlCommand cmd = new SqlCommand();
+                        cmd.Connection = conn;
+                        cmd.CommandText = quary;
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        this._inputParam.progressBar.PerformStep();
 
-                        nodeList.Add(data);
+                        while (rdr.Read())
+                        {
+                            V_Node_T data = new V_Node_T();
+                            data.Enterprise_code = rdr["enterprise_code"].ToString();
+                            data.Enterprise_name = rdr["enterprise_name"].ToString();
+                            data.Department_code = rdr["department_code"].ToString();
+                            data.Department_name = rdr["department_name"].ToString();
+                            data.Node_sn = rdr["node_sn"].ToString();
+                            data.Id = rdr["id"].ToString();
+                            data.Node_name = rdr["node_name"].ToString();
+                            data.Mac = rdr["mac"].ToString();
+                            data.Ip = rdr["ip"].ToString();
+                            data.Regist_timestamp = rdr["regist_timestamp"].ToString();
+                            data.Use_yn = rdr["use_yn"].ToString();
+
+                            nodeList.Add(data);
+                        }
+                        this._inputParam.progressBar.PerformStep();
                     }
-                    this._inputParam.progressBar.PerformStep();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return false;
-            }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
 
-            DatabasePool.Instance.V_Node_List.AddRange(nodeList);
+                DatabasePool.Instance.V_Node_List.AddRange(nodeList);
+            }
 
             return (DatabasePool.Instance.V_Node_List.Count > 0);
         }
@@ -314,12 +404,15 @@ namespace LogAnalyzer2
                 strRegist_datetime = origin.ToString(strDatatimeDbPattern, culture);
             }
 
-            if (GetDatabaseV_Members_AddedTable(strRegist_datetime) == false)
-                return false;
+            if (!Constants.FLG_LOCAL)
+            {
 
-            if (GetDatabaseV_Members_ModifiedTable(strRegist_datetime) == false)
-                return false;
+                if (GetDatabaseV_Members_AddedTable(strRegist_datetime) == false)
+                    return false;
 
+                if (GetDatabaseV_Members_ModifiedTable(strRegist_datetime) == false)
+                    return false;
+            }
             return true;
         }
 
