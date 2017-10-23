@@ -10,11 +10,20 @@ using System.Windows.Forms;
 
 namespace LogAnalyzer2
 {
+
     public partial class MainForm : Form
     {
         public MainForm()
         {
             InitializeComponent();
+        
+            if (Constants.FLG_LOCAL)
+            {
+                MessageBox.Show("ローカル環境で実行します。\r\nサーバーには接続しません。",
+                    "注意！",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation);
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -86,7 +95,8 @@ namespace LogAnalyzer2
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (DBConnection.Instance.IsDbConnected() == true && MessageBox.Show("Do you want to save the database?", "caption", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+//            if (DBConnection.Instance.IsDbConnected() == true && MessageBox.Show("Do you want to save the database?", "caption", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            if (Constants.FLG_LOCAL == false && DBConnection.Instance.IsDbConnected() == true && MessageBox.Show("Do you want to save the database?", "caption", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
             {
                 DBConnection.Instance.SaveDatabase();
                 this.progressBar1.Value = 0;
@@ -109,6 +119,12 @@ namespace LogAnalyzer2
 
             return param;
         }
+    }
+
+    static class Constants
+    {
+        public const bool FLG_LOCAL = true;
+        //        public const bool FLG_LOCAL = false;
     }
 }
 
