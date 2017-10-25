@@ -34,6 +34,8 @@ namespace LogAnalyzer2
                 return false;
             if (GetDatabaseV_Members_Table() == false)
                 return false;
+            if (GetDatabaseModuleID_Log() == false)
+                return false;
             if (GetDatabaseTB_Log() == false)
                 return false;
             if (GetDatabaseMidasUpdate_nIP() == false)
@@ -44,6 +46,8 @@ namespace LogAnalyzer2
         private bool GetDatabaseTB_Log()
         {
             DatabasePool.Instance.TB_Log_List.Clear();
+            string strProgCode = GetStrProgCode();
+            int nProductNum = GetProductNum();
 
             if (Constants.FLG_LOCAL)
             {
@@ -62,7 +66,7 @@ namespace LogAnalyzer2
                 string dayFrom = _inputParam.strDateTimePickerFrom;
                 string dayTo = _inputParam.strDateTimePickerTo;
                 string strLangCode = GetStrLangCode();
-                string strProgCode = GetStrProgCode();
+//                string strProgCode = GetStrProgCode();
 
                 string quary = string.Format("SELECT * FROM TB_Log WHERE strLangCode='{0}' AND strProgCode='{1}' AND dSDate>='{2}' AND dSDate<='{3}' ORDER BY dSDate ASC;", strLangCode, strProgCode, dayFrom, dayTo);
 
@@ -70,6 +74,7 @@ namespace LogAnalyzer2
                 {
                     string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
                         CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
+
                     using (SqlConnection conn = new SqlConnection(strConn))
                     {
                         conn.Open();
@@ -118,6 +123,7 @@ namespace LogAnalyzer2
                     MessageBox.Show(ex.Message);
                     return false;
                 }
+
             }
 /*
             // ローカル開発用に機能ログ保存
@@ -127,6 +133,27 @@ namespace LogAnalyzer2
             FileStream fs = new FileStream(strFilePath, FileMode.Create);
             serializer.Serialize(fs, DatabasePool.Instance.TB_Log_List);
             fs.Close();
+*/
+
+/*            
+            // Drawing の場合は、CADロボ と Drawing の判定をする
+            if (strProgCode == "MDW")
+            {
+                if (nProductNum == 77)
+                {
+                    // CADロボ
+                    foreach (string data in DatabasePool.Instance.ModuleID_Log_Dic[])
+                    {
+                        DatabasePool.Instance.TB_Log_List.Remove(x => x.strPID == 2);
+                    }
+                }
+                else
+                {
+                    // Drawing
+                    DatabasePool.Instance.TB_Log_List.Add(data);
+                }
+
+            }
 */
             return (DatabasePool.Instance.TB_Log_List.Count > 0);
         }
@@ -252,7 +279,7 @@ namespace LogAnalyzer2
             fs.Close();
 */
 
-            return (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0);
+            return (DatabasePool.Instance.MidasUpdate_nIP_List.Count >= 0);
         }
 
         private bool LoadV_MidasUpdate_Table_XML(string strFilePath, ref double dFromTimestamp)
@@ -666,6 +693,156 @@ namespace LogAnalyzer2
 
             return true;
         }
+
+//* 20171024 */
+        private bool GetDatabaseModuleID_Log()
+        {
+            //Stopwatchオブジェクトを作成する
+//            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            //ストップウォッチを開始する
+//            sw.Start();
+
+            DatabasePool.Instance.ModuleID_Log_Dic.Clear();
+            List<ModuleID_Log_T> ModuleIDList = new List<ModuleID_Log_T>();
+
+            if (Constants.FLG_LOCAL)
+            {
+                string strFilePath = Application.StartupPath + "\\V_ModuleID_LOG_Dic.xml";
+                double dFromTimestamp = 0;
+
+                if (File.Exists(strFilePath) == true)
+                {
+                    if (LoadV_ModuleID_Log_Table_XML(strFilePath, ref dFromTimestamp) == false)
+                        return false;
+                }
+            }
+            else
+            {
+                string dayFrom = _inputParam.strDateTimePickerFrom;
+                string dayTo = _inputParam.strDateTimePickerTo;
+                string strLangCode = GetStrLangCode();
+                string strProgCode = GetStrProgCode();
+
+                string quary = string.Format("SELECT TBSS.strPID AS strPID, RTBLS.nProductID AS nProductID FROM [midasit.co.kr.mms2]..TB_SalesSummary AS TBSS INNER JOIN [midasit.co.kr.mms2]..RTB_LockSales AS RTBLS ON RTBLS.idxRTBLockSales=TBSS.idxRTBLockSales WHERE  RTBLS.strLockCode like N'WWeb%'");
+
+                try
+                {
+                    string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
+                        CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
+                    using (SqlConnection conn = new SqlConnection(strConn))
+                    {
+                        conn.Open();
+                        this._inputParam.progressBar.PerformStep();
+                        SqlCommand cmd = new SqlCommand();
+                        cmd.Connection = conn;
+                        cmd.CommandText = quary;
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        this._inputParam.progressBar.PerformStep();
+
+                        while (rdr.Read())
+                        {
+                            ModuleID_Log_T data = new ModuleID_Log_T();
+                            data.strPID = rdr["strPID"].ToString();
+                            data.nProductID = rdr["nProductID"].ToString();
+
+                            ModuleIDList.Add(data);
+                        }
+
+                        this._inputParam.progressBar.PerformStep();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + "\r\nModuleID の失敗です。");
+                    return false;
+                }
+
+/*
+                foreach (ModuleID_Log_T ModuleID in ModuleIDList)
+                {
+                    DatabasePool.Instance.TB_Log_List.Find(x => x.StrPID == ModuleID.strPID);
+                    {
+                        DatabasePool.Instance.ModuleID_Log_Dic[ModuleID.strPID] = ModuleID;
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert(false, "IDは複数存在出来ません。");
+                    }
+                }
+*/
+
+
+                //ストップウォッチを止める
+//                sw.Stop();
+
+                //結果を表示する
+//                Console.Write(sw.Elapsed);
+
+
+
+            }
+
+            string sModule = "";
+            int nProductNum = GetProductNum();
+            if (nProductNum == 77)
+            {
+                // CADロボ
+                sModule = "3";
+            }
+            else if (nProductNum == 102)
+            {
+                // Drawing
+                sModule = "2";
+            }
+            //                ModuleIDList = ModuleIDList.FindAll( n => ModuleIDList.Exists(m => n.strPID.Contains("MDW")));    // 時間がかかりすぎ
+            ModuleIDList = ModuleIDList.FindAll(x => x.nProductID == sModule);
+            DatabasePool.Instance.ModuleID_Log_Dic = ModuleIDList.ToDictionary(n => n.strPID.ToString());
+
+
+            //                urlList.RemoveAll(url => downLoadedList.Exists(dl => url.Contains(dl)));
+
+
+
+            /*
+                        // ローカル開発用に機能ログ保存
+            string strFilePath2 = Application.StartupPath + "\\V_ModuleID_LOG_Dic.xml";
+
+            XmlSerializer serializer = new XmlSerializer(typeof(Dictionary<string,ModuleID_Log_T>));
+                        FileStream fs = new FileStream(strFilePath2, FileMode.Create);
+                        serializer.Serialize(fs, DatabasePool.Instance.ModuleID_Log_Dic);
+                        fs.Close();
+            */
+            return (DatabasePool.Instance.ModuleID_Log_Dic.Count > 0);
+        }
+
+        private bool LoadV_ModuleID_Log_Table_XML(string strFilePath, ref double dFromTimestamp)
+        {
+            try
+            {
+                XmlSerializer deSerializer = new XmlSerializer(typeof(List<ModuleID_Log_T>));
+                StreamReader reader = new StreamReader(strFilePath);
+                DatabasePool.Instance.ModuleID_Log_Dic = (Dictionary<string,ModuleID_Log_T>)deSerializer.Deserialize(reader);
+                this._inputParam.progressBar.PerformStep();
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+            /*
+                        if (DatabasePool.Instance.TB_Log_List.Count > 0)
+                        {
+                            string strTime = DatabasePool.Instance.TB_Log_List[DatabasePool.Instance.TB_Log_List.Count - 1].Regist_timestamp;
+
+                            double dVal = 0;
+                            if (double.TryParse(strTime, out dVal) == true)
+                                dFromTimestamp = dVal;
+                        }
+            */
+            return (DatabasePool.Instance.ModuleID_Log_Dic.Count > 0);
+        }
+//* 20171024 */
 
         private int GetProductNum()
         {
