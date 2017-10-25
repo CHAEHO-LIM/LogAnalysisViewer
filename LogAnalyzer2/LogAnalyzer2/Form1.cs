@@ -13,6 +13,12 @@ namespace LogAnalyzer2
 
     public partial class MainForm : Form
     {
+        int nProduct = 0;
+        int nCountry = 0;
+        string sDateTo = "";
+        string sDateFrom = "";
+        bool buttonUpdateStatus = false;
+
         public MainForm()
         {
             InitializeComponent();
@@ -46,7 +52,10 @@ namespace LogAnalyzer2
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
+            buttonUpdateSet();
+
             buttonUpdate.Enabled = false;
+            buttonUpdateStatus = false;
 
             InputParam param = GetInputParam();
 
@@ -58,6 +67,7 @@ namespace LogAnalyzer2
             {
                 MessageBox.Show("Database Connection is Success!");
                 buttonUpdate.Enabled = true;
+                buttonUpdateStatus = true;
             }
 
             this.progressBar1.Value = 0;
@@ -119,11 +129,55 @@ namespace LogAnalyzer2
 
             return param;
         }
+
+        private void comboBoxProduct_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            buttonUpdateCheck();
+        }
+
+        private void comboBoxCountry_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            buttonUpdateCheck();
+        }
+
+        private void dateTimePickerFrom_ValueChanged(object sender, EventArgs e)
+        {
+            buttonUpdateCheck();
+        }
+
+        private void dateTimePickerTo_ValueChanged(object sender, EventArgs e)
+        {
+            buttonUpdateCheck();
+        }
+
+        private void buttonUpdateCheck()
+        {
+            if (buttonUpdateStatus)
+            {
+                int Prd=comboBoxProduct.SelectedIndex*10;
+                int Comp = comboBoxCountry.SelectedIndex;
+                string sTo=dateTimePickerTo.Value.ToString("yyyy-MM-dd").Substring(0, 10);
+                string sFrom = dateTimePickerFrom.Value.ToString("yyyy-MM-dd").Substring(0, 10);
+
+                if( nProduct==Prd &&  nCountry==Comp && sDateTo==sTo && sDateFrom==sFrom)
+                    buttonUpdate.Enabled = true;
+                else
+                    buttonUpdate.Enabled = false;
+            }
+        }
+
+        private void buttonUpdateSet()
+        {
+            nProduct = comboBoxProduct.SelectedIndex * 10;
+            nCountry = comboBoxCountry.SelectedIndex;
+            sDateTo = dateTimePickerTo.Value.ToString("yyyy-MM-dd").Substring(0, 10);
+            sDateFrom = dateTimePickerFrom.Value.ToString("yyyy-MM-dd").Substring(0, 10);
+        }
     }
 
     static class Constants
     {
-        public const bool FLG_LOCAL = true;
+        public const bool FLG_LOCAL = false;
         //        public const bool FLG_LOCAL = false;
     }
 }
