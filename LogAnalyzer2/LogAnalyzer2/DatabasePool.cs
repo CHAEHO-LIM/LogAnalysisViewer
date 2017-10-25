@@ -13,6 +13,7 @@ namespace LogAnalyzer2
         private List<MidasUpdate_nIP_T> _MidasUpdate_nIP_List;
         private List<V_Node_T> _V_Node_List;
         private Dictionary<string, V_Members_T> _V_Members_Dic;
+        private Dictionary<string,ModuleID_Log_T> _ModuleID_Log_Dic;
 
         private static DatabasePool _instance;
         public static DatabasePool Instance
@@ -49,6 +50,12 @@ namespace LogAnalyzer2
             set { _V_Members_Dic = value; }
         }
 
+        public Dictionary<string,ModuleID_Log_T> ModuleID_Log_Dic
+        {
+            get { return _ModuleID_Log_Dic; }
+            set { _ModuleID_Log_Dic = value; }
+        }
+
         public DatabasePool()
         {
             Initialize();
@@ -75,6 +82,12 @@ namespace LogAnalyzer2
                 _V_Members_Dic = new Dictionary<string, V_Members_T>();
             else
                 _V_Members_Dic.Clear();
+
+            if (_ModuleID_Log_Dic == null)
+                _ModuleID_Log_Dic = new Dictionary<string,ModuleID_Log_T>();
+            else
+                _ModuleID_Log_Dic.Clear();
+
         }
 
         
