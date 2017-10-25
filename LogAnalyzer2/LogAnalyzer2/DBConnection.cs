@@ -149,7 +149,6 @@ namespace LogAnalyzer2
                     if (filter.IsShowData() == false)
                         continue;
 
-
                     string strVersion = string.Format("{0}{1}{2}", data.NVer1, data.NVer2, data.NVer3);
                     string strYearMonth = data.Regdate.Substring(0, 7);
 
@@ -192,52 +191,55 @@ namespace LogAnalyzer2
             {
                 foreach (TB_Log_T data in DatabasePool.Instance.TB_Log_List)
                 {
-                    string strID = data.StrID;
-
-                    List<string> userIds = new List<string>();
-                    userIds.Add(strID);
-
-                    string strCompany = string.Empty;
-                    SearchUserInfoFromIds(param, userIds, ref strCompany);
-
-                    LogFilter filter = new LogFilter(param);
-                    filter.UserID = strID;
-                    filter.Company = strCompany;
-                    filter.UserIP = data.StrIP;
-                    if (filter.IsShowData() == false)
-                        continue;
-
-                    string strVersion = data.StrVersion;
-                    string strYearMonth = data.DSDate.Substring(0, 7);
-
-                    string strKey = string.Empty;
-                    if (param.resultType == InputParam.eResultType.kByVersionType)
-                        strKey = strVersion;
-                    else if (param.resultType == InputParam.eResultType.kByCompanyType)
-                        strKey = string.Format("{0}/{1}/{2}", strCompany, strID, strVersion);
-
-                    if (resultDic.ContainsKey(strKey) == true)
+                    if (DatabasePool.Instance.ModuleID_Log_Dic.ContainsKey(data.StrPID))
                     {
-                        if (resultDic[strKey]._periodicalSumNumDic.ContainsKey(strYearMonth) == true)
+                        string strID = data.StrID;
+
+                        List<string> userIds = new List<string>();
+                        userIds.Add(strID);
+
+                        string strCompany = string.Empty;
+                        SearchUserInfoFromIds(param, userIds, ref strCompany);
+
+                        LogFilter filter = new LogFilter(param);
+                        filter.UserID = strID;
+                        filter.Company = strCompany;
+                        filter.UserIP = data.StrIP;
+                        if (filter.IsShowData() == false)
+                            continue;
+
+                        string strVersion = data.StrVersion;
+                        string strYearMonth = data.DSDate.Substring(0, 7);
+
+                        string strKey = string.Empty;
+                        if (param.resultType == InputParam.eResultType.kByVersionType)
+                            strKey = strVersion;
+                        else if (param.resultType == InputParam.eResultType.kByCompanyType)
+                            strKey = string.Format("{0}/{1}/{2}", strCompany, strID, strVersion);
+
+                        if (resultDic.ContainsKey(strKey) == true)
                         {
-                            uint num = resultDic[strKey]._periodicalSumNumDic[strYearMonth];
-                            num += 1;
-                            resultDic[strKey]._periodicalSumNumDic[strYearMonth] = num;
+                            if (resultDic[strKey]._periodicalSumNumDic.ContainsKey(strYearMonth) == true)
+                            {
+                                uint num = resultDic[strKey]._periodicalSumNumDic[strYearMonth];
+                                num += 1;
+                                resultDic[strKey]._periodicalSumNumDic[strYearMonth] = num;
+                            }
+                            else
+                            {
+                                resultDic[strKey]._periodicalSumNumDic.Add(strYearMonth, 1);
+                            }
                         }
                         else
                         {
-                            resultDic[strKey]._periodicalSumNumDic.Add(strYearMonth, 1);
-                        }
-                    }
-                    else
-                    {
-                        ResultTable result = new ResultTable();
-                        result._company = strCompany;
-                        result._id = strID;
-                        result._version = strVersion;
-                        result._periodicalSumNumDic.Add(strYearMonth, 1);
+                            ResultTable result = new ResultTable();
+                            result._company = strCompany;
+                            result._id = strID;
+                            result._version = strVersion;
+                            result._periodicalSumNumDic.Add(strYearMonth, 1);
 
-                        resultDic.Add(strKey, result);
+                            resultDic.Add(strKey, result);
+                        }
                     }
                 }
             }
@@ -313,10 +315,13 @@ namespace LogAnalyzer2
 
             foreach (TB_Log_T tbLogT in DatabasePool.Instance.TB_Log_List)
             {
-                if (tbLogT.StrMac.Contains(strMacAddress) == true)
+                if (DatabasePool.Instance.ModuleID_Log_Dic.ContainsKey(tbLogT.StrPID))
                 {
-                    if (userIds.Contains(tbLogT.StrID) == false)
-                        userIds.Add(tbLogT.StrID);
+                    if (tbLogT.StrMac.Contains(strMacAddress) == true)
+                    {
+                        if (userIds.Contains(tbLogT.StrID) == false)
+                            userIds.Add(tbLogT.StrID);
+                    }
                 }
             }
 
