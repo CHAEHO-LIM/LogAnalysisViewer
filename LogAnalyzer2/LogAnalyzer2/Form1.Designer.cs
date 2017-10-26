@@ -52,10 +52,15 @@
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxCompanyName = new System.Windows.Forms.TextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.groupBoxExcelWrite = new System.Windows.Forms.GroupBox();
+            this.textBoxExcelFileName = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBoxLogType.SuspendLayout();
             this.groupBoxResult.SuspendLayout();
             this.groupBoxDetail.SuspendLayout();
+            this.groupBoxExcelWrite.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -90,7 +95,7 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(428, 20);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(38, 12);
+            this.label4.Size = new System.Drawing.Size(35, 12);
             this.label4.TabIndex = 10;
             this.label4.Text = "Date :";
             // 
@@ -99,7 +104,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(3, 21);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(56, 12);
+            this.label3.Size = new System.Drawing.Size(50, 12);
             this.label3.TabIndex = 7;
             this.label3.Text = "Product :";
             // 
@@ -108,7 +113,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(238, 21);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 12);
+            this.label2.Size = new System.Drawing.Size(51, 12);
             this.label2.TabIndex = 6;
             this.label2.Text = "Country :";
             // 
@@ -117,7 +122,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(678, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(14, 12);
+            this.label1.Size = new System.Drawing.Size(10, 12);
             this.label1.TabIndex = 5;
             this.label1.Text = "~";
             // 
@@ -126,16 +131,18 @@
             this.dateTimePickerTo.CustomFormat = "yyyy-mm-dd";
             this.dateTimePickerTo.Location = new System.Drawing.Point(698, 17);
             this.dateTimePickerTo.Name = "dateTimePickerTo";
-            this.dateTimePickerTo.Size = new System.Drawing.Size(200, 21);
+            this.dateTimePickerTo.Size = new System.Drawing.Size(200, 19);
             this.dateTimePickerTo.TabIndex = 4;
+            this.dateTimePickerTo.ValueChanged += new System.EventHandler(this.dateTimePickerTo_ValueChanged);
             // 
             // dateTimePickerFrom
             // 
             this.dateTimePickerFrom.CustomFormat = "yyyy-mm-dd";
             this.dateTimePickerFrom.Location = new System.Drawing.Point(472, 17);
             this.dateTimePickerFrom.Name = "dateTimePickerFrom";
-            this.dateTimePickerFrom.Size = new System.Drawing.Size(200, 21);
+            this.dateTimePickerFrom.Size = new System.Drawing.Size(200, 19);
             this.dateTimePickerFrom.TabIndex = 2;
+            this.dateTimePickerFrom.ValueChanged += new System.EventHandler(this.dateTimePickerFrom_ValueChanged);
             // 
             // comboBoxProduct
             // 
@@ -148,6 +155,7 @@
             this.comboBoxProduct.Name = "comboBoxProduct";
             this.comboBoxProduct.Size = new System.Drawing.Size(160, 20);
             this.comboBoxProduct.TabIndex = 1;
+            this.comboBoxProduct.SelectedIndexChanged += new System.EventHandler(this.comboBoxProduct_SelectedIndexChanged);
             // 
             // comboBoxCountry
             // 
@@ -159,6 +167,7 @@
             this.comboBoxCountry.Name = "comboBoxCountry";
             this.comboBoxCountry.Size = new System.Drawing.Size(118, 20);
             this.comboBoxCountry.TabIndex = 0;
+            this.comboBoxCountry.SelectedIndexChanged += new System.EventHandler(this.comboBoxCountry_SelectedIndexChanged);
             // 
             // buttonUpdate
             // 
@@ -177,9 +186,9 @@
             this.listViewResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewResult.Location = new System.Drawing.Point(12, 124);
+            this.listViewResult.Location = new System.Drawing.Point(12, 177);
             this.listViewResult.Name = "listViewResult";
-            this.listViewResult.Size = new System.Drawing.Size(1012, 348);
+            this.listViewResult.Size = new System.Drawing.Size(1015, 330);
             this.listViewResult.TabIndex = 1;
             this.listViewResult.UseCompatibleStateImageBehavior = false;
             // 
@@ -199,7 +208,7 @@
             this.radioButtonFunctionLog.AutoSize = true;
             this.radioButtonFunctionLog.Location = new System.Drawing.Point(114, 19);
             this.radioButtonFunctionLog.Name = "radioButtonFunctionLog";
-            this.radioButtonFunctionLog.Size = new System.Drawing.Size(96, 16);
+            this.radioButtonFunctionLog.Size = new System.Drawing.Size(89, 16);
             this.radioButtonFunctionLog.TabIndex = 1;
             this.radioButtonFunctionLog.TabStop = true;
             this.radioButtonFunctionLog.Text = "Function Log";
@@ -211,7 +220,7 @@
             this.radioButtonUseLog.Checked = true;
             this.radioButtonUseLog.Location = new System.Drawing.Point(19, 20);
             this.radioButtonUseLog.Name = "radioButtonUseLog";
-            this.radioButtonUseLog.Size = new System.Drawing.Size(70, 16);
+            this.radioButtonUseLog.Size = new System.Drawing.Size(65, 16);
             this.radioButtonUseLog.TabIndex = 0;
             this.radioButtonUseLog.TabStop = true;
             this.radioButtonUseLog.Text = "Use Log";
@@ -233,7 +242,7 @@
             this.radioButtonByCompany.AutoSize = true;
             this.radioButtonByCompany.Location = new System.Drawing.Point(128, 19);
             this.radioButtonByCompany.Name = "radioButtonByCompany";
-            this.radioButtonByCompany.Size = new System.Drawing.Size(97, 16);
+            this.radioButtonByCompany.Size = new System.Drawing.Size(88, 16);
             this.radioButtonByCompany.TabIndex = 1;
             this.radioButtonByCompany.TabStop = true;
             this.radioButtonByCompany.Text = "By Company";
@@ -245,7 +254,7 @@
             this.radioButtonByVersion.Checked = true;
             this.radioButtonByVersion.Location = new System.Drawing.Point(22, 20);
             this.radioButtonByVersion.Name = "radioButtonByVersion";
-            this.radioButtonByVersion.Size = new System.Drawing.Size(85, 16);
+            this.radioButtonByVersion.Size = new System.Drawing.Size(80, 16);
             this.radioButtonByVersion.TabIndex = 0;
             this.radioButtonByVersion.TabStop = true;
             this.radioButtonByVersion.Text = "By Version";
@@ -256,7 +265,7 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(6, 21);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(106, 12);
+            this.label5.Size = new System.Drawing.Size(91, 12);
             this.label5.TabIndex = 10;
             this.label5.Text = "Company Name :";
             // 
@@ -278,7 +287,7 @@
             // 
             this.textBoxUserID.Location = new System.Drawing.Point(294, 15);
             this.textBoxUserID.Name = "textBoxUserID";
-            this.textBoxUserID.Size = new System.Drawing.Size(100, 21);
+            this.textBoxUserID.Size = new System.Drawing.Size(100, 19);
             this.textBoxUserID.TabIndex = 13;
             // 
             // label6
@@ -286,7 +295,7 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(234, 20);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(54, 12);
+            this.label6.Size = new System.Drawing.Size(50, 12);
             this.label6.TabIndex = 12;
             this.label6.Text = "User ID :";
             // 
@@ -294,22 +303,61 @@
             // 
             this.textBoxCompanyName.Location = new System.Drawing.Point(118, 17);
             this.textBoxCompanyName.Name = "textBoxCompanyName";
-            this.textBoxCompanyName.Size = new System.Drawing.Size(100, 21);
+            this.textBoxCompanyName.Size = new System.Drawing.Size(100, 19);
             this.textBoxCompanyName.TabIndex = 11;
             // 
             // progressBar1
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 474);
+            this.progressBar1.Location = new System.Drawing.Point(12, 509);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(1012, 10);
+            this.progressBar1.Size = new System.Drawing.Size(1015, 10);
             this.progressBar1.TabIndex = 12;
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Location = new System.Drawing.Point(631, 16);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(85, 23);
+            this.buttonSave.TabIndex = 13;
+            this.buttonSave.Text = "Save";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // groupBoxExcelWrite
+            // 
+            this.groupBoxExcelWrite.Controls.Add(this.label7);
+            this.groupBoxExcelWrite.Controls.Add(this.textBoxExcelFileName);
+            this.groupBoxExcelWrite.Controls.Add(this.buttonSave);
+            this.groupBoxExcelWrite.Location = new System.Drawing.Point(12, 126);
+            this.groupBoxExcelWrite.Name = "groupBoxExcelWrite";
+            this.groupBoxExcelWrite.Size = new System.Drawing.Size(722, 45);
+            this.groupBoxExcelWrite.TabIndex = 14;
+            this.groupBoxExcelWrite.TabStop = false;
+            this.groupBoxExcelWrite.Text = "Excel Write";
+            // 
+            // textBoxExcelFileName
+            // 
+            this.textBoxExcelFileName.Location = new System.Drawing.Point(81, 17);
+            this.textBoxExcelFileName.Name = "textBoxExcelFileName";
+            this.textBoxExcelFileName.Size = new System.Drawing.Size(541, 19);
+            this.textBoxExcelFileName.TabIndex = 14;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(16, 21);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(57, 12);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "File Name";
             // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1036, 486);
+            this.ClientSize = new System.Drawing.Size(1039, 521);
+            this.Controls.Add(this.groupBoxExcelWrite);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.groupBoxDetail);
             this.Controls.Add(this.groupBoxResult);
@@ -329,6 +377,8 @@
             this.groupBoxResult.PerformLayout();
             this.groupBoxDetail.ResumeLayout(false);
             this.groupBoxDetail.PerformLayout();
+            this.groupBoxExcelWrite.ResumeLayout(false);
+            this.groupBoxExcelWrite.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -359,6 +409,10 @@
         private System.Windows.Forms.TextBox textBoxUserID;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.GroupBox groupBoxExcelWrite;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBoxExcelFileName;
     }
 }
 
