@@ -11,9 +11,9 @@ namespace LogAnalyzer2
     {
         private List<TB_Log_T> _TB_Log_List;
         private List<MidasUpdate_nIP_T> _MidasUpdate_nIP_List;
-        private List<V_Node_T> _V_Node_List;
+        private Dictionary<string,V_Node_T> _V_Node_Dic;
         private Dictionary<string, V_Members_T> _V_Members_Dic;
-        private Dictionary<string,ModuleID_Log_T> _ModuleID_Log_Dic;
+//        private Dictionary<string,ModuleID_Log_T> _ModuleID_Log_Dic;
 
         private static DatabasePool _instance;
         public static DatabasePool Instance
@@ -38,22 +38,16 @@ namespace LogAnalyzer2
             set { _MidasUpdate_nIP_List = value; }
         }
 
-        public List<V_Node_T> V_Node_List
+        public Dictionary<string,V_Node_T> V_Node_Dic
         {
-            get { return _V_Node_List; }
-            set { _V_Node_List = value; }
+            get { return _V_Node_Dic; }
+            set { _V_Node_Dic = value; }
         }
 
         public Dictionary<string, V_Members_T> V_Members_Dic
         {
             get { return _V_Members_Dic; }
             set { _V_Members_Dic = value; }
-        }
-
-        public Dictionary<string,ModuleID_Log_T> ModuleID_Log_Dic
-        {
-            get { return _ModuleID_Log_Dic; }
-            set { _ModuleID_Log_Dic = value; }
         }
 
         public DatabasePool()
@@ -73,21 +67,15 @@ namespace LogAnalyzer2
             else
                 _MidasUpdate_nIP_List.Clear();
 
-            if (_V_Node_List == null)
-                _V_Node_List = new List<V_Node_T>();
+            if (_V_Node_Dic == null)
+                _V_Node_Dic = new Dictionary<string,V_Node_T>();
             else
-                _V_Node_List.Clear();
+                _V_Node_Dic.Clear();
 
             if (_V_Members_Dic == null)
                 _V_Members_Dic = new Dictionary<string, V_Members_T>();
             else
                 _V_Members_Dic.Clear();
-
-            if (_ModuleID_Log_Dic == null)
-                _ModuleID_Log_Dic = new Dictionary<string,ModuleID_Log_T>();
-            else
-                _ModuleID_Log_Dic.Clear();
-
         }
 
         

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -39,7 +40,8 @@
             this.comboBoxProduct = new System.Windows.Forms.ComboBox();
             this.comboBoxCountry = new System.Windows.Forms.ComboBox();
             this.buttonUpdate = new System.Windows.Forms.Button();
-            this.listViewResult = new System.Windows.Forms.ListView();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.クリップボードにコピーToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxLogType = new System.Windows.Forms.GroupBox();
             this.radioButtonFunctionLog = new System.Windows.Forms.RadioButton();
             this.radioButtonUseLog = new System.Windows.Forms.RadioButton();
@@ -54,13 +56,14 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonSave = new System.Windows.Forms.Button();
             this.groupBoxExcelWrite = new System.Windows.Forms.GroupBox();
-            this.textBoxExcelFileName = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.dataGridViewResult = new System.Windows.Forms.DataGridView();
             this.groupBox1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.groupBoxLogType.SuspendLayout();
             this.groupBoxResult.SuspendLayout();
             this.groupBoxDetail.SuspendLayout();
             this.groupBoxExcelWrite.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -150,7 +153,10 @@
             this.comboBoxProduct.FormattingEnabled = true;
             this.comboBoxProduct.Items.AddRange(new object[] {
             "CADRobo(Drawing)",
-            "midasDrawing"});
+            "CADRobo(eGen)",
+            "midas Drawing",
+            "midas eGen",
+            "midas iGen"});
             this.comboBoxProduct.Location = new System.Drawing.Point(65, 17);
             this.comboBoxProduct.Name = "comboBoxProduct";
             this.comboBoxProduct.Size = new System.Drawing.Size(160, 20);
@@ -181,16 +187,19 @@
             this.buttonUpdate.UseVisualStyleBackColor = true;
             this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
             // 
-            // listViewResult
+            // contextMenuStrip1
             // 
-            this.listViewResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewResult.Location = new System.Drawing.Point(12, 177);
-            this.listViewResult.Name = "listViewResult";
-            this.listViewResult.Size = new System.Drawing.Size(1015, 330);
-            this.listViewResult.TabIndex = 1;
-            this.listViewResult.UseCompatibleStateImageBehavior = false;
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.クリップボードにコピーToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(169, 26);
+            this.contextMenuStrip1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.contextMenuStrip1_MouseClick);
+            // 
+            // クリップボードにコピーToolStripMenuItem
+            // 
+            this.クリップボードにコピーToolStripMenuItem.Name = "クリップボードにコピーToolStripMenuItem";
+            this.クリップボードにコピーToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.クリップボードにコピーToolStripMenuItem.Text = "クリップボードにコピー";
             // 
             // groupBoxLogType
             // 
@@ -312,12 +321,12 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.Location = new System.Drawing.Point(12, 509);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(1015, 10);
+            this.progressBar1.Size = new System.Drawing.Size(1136, 10);
             this.progressBar1.TabIndex = 12;
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(631, 16);
+            this.buttonSave.Location = new System.Drawing.Point(19, 18);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(85, 23);
             this.buttonSave.TabIndex = 13;
@@ -327,42 +336,39 @@
             // 
             // groupBoxExcelWrite
             // 
-            this.groupBoxExcelWrite.Controls.Add(this.label7);
-            this.groupBoxExcelWrite.Controls.Add(this.textBoxExcelFileName);
             this.groupBoxExcelWrite.Controls.Add(this.buttonSave);
-            this.groupBoxExcelWrite.Location = new System.Drawing.Point(12, 126);
+            this.groupBoxExcelWrite.Location = new System.Drawing.Point(1030, 72);
             this.groupBoxExcelWrite.Name = "groupBoxExcelWrite";
-            this.groupBoxExcelWrite.Size = new System.Drawing.Size(722, 45);
+            this.groupBoxExcelWrite.Size = new System.Drawing.Size(118, 45);
             this.groupBoxExcelWrite.TabIndex = 14;
             this.groupBoxExcelWrite.TabStop = false;
-            this.groupBoxExcelWrite.Text = "Excel Write";
+            this.groupBoxExcelWrite.Text = "Excel Output";
             // 
-            // textBoxExcelFileName
+            // dataGridViewResult
             // 
-            this.textBoxExcelFileName.Location = new System.Drawing.Point(81, 17);
-            this.textBoxExcelFileName.Name = "textBoxExcelFileName";
-            this.textBoxExcelFileName.Size = new System.Drawing.Size(541, 19);
-            this.textBoxExcelFileName.TabIndex = 14;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(16, 21);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(57, 12);
-            this.label7.TabIndex = 15;
-            this.label7.Text = "File Name";
+            this.dataGridViewResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewResult.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewResult.ContextMenuStrip = this.contextMenuStrip1;
+            this.dataGridViewResult.Location = new System.Drawing.Point(12, 124);
+            this.dataGridViewResult.Name = "dataGridViewResult";
+            this.dataGridViewResult.RowTemplate.Height = 21;
+            this.dataGridViewResult.Size = new System.Drawing.Size(1147, 379);
+            this.dataGridViewResult.TabIndex = 15;
+            this.dataGridViewResult.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewResult_CellContentClick);
+            this.dataGridViewResult.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewResult_CellMouseDoubleClick);
             // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1039, 521);
+            this.ClientSize = new System.Drawing.Size(1160, 521);
+            this.Controls.Add(this.dataGridViewResult);
             this.Controls.Add(this.groupBoxExcelWrite);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.groupBoxDetail);
             this.Controls.Add(this.groupBoxResult);
             this.Controls.Add(this.groupBoxLogType);
-            this.Controls.Add(this.listViewResult);
             this.Controls.Add(this.groupBox1);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -371,6 +377,7 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.groupBoxLogType.ResumeLayout(false);
             this.groupBoxLogType.PerformLayout();
             this.groupBoxResult.ResumeLayout(false);
@@ -378,7 +385,7 @@
             this.groupBoxDetail.ResumeLayout(false);
             this.groupBoxDetail.PerformLayout();
             this.groupBoxExcelWrite.ResumeLayout(false);
-            this.groupBoxExcelWrite.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -393,7 +400,6 @@
         private System.Windows.Forms.DateTimePicker dateTimePickerFrom;
         private System.Windows.Forms.ComboBox comboBoxProduct;
         private System.Windows.Forms.ComboBox comboBoxCountry;
-        private System.Windows.Forms.ListView listViewResult;
         private System.Windows.Forms.Button buttonUpdate;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.GroupBox groupBoxLogType;
@@ -411,8 +417,9 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.GroupBox groupBoxExcelWrite;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBoxExcelFileName;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem クリップボードにコピーToolStripMenuItem;
+        private System.Windows.Forms.DataGridView dataGridViewResult;
     }
 }
 

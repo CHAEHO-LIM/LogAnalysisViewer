@@ -8,6 +8,7 @@ namespace LogAnalyzer2
 {
     public class MidasUpdate_nIP_T
     {
+/*
         private string _regdate;
         private string _index_id;
         private string _ClientV;
@@ -33,9 +34,140 @@ namespace LogAnalyzer2
         private string _ExtLod;
         private string _PLFInfo;
         private string _ULog;
+*/ 
         //연산에 의한 결과 값
         private string _MacAddress;
 
+
+        private object[] MidasUpdate_nIP_Data;
+
+        public string Regdate
+        {
+            get { return MidasUpdate_nIP_Data[0].ToString(); }
+            set { MidasUpdate_nIP_Data[0] = value; }
+        }
+        public string Index_id
+        {
+            get { return MidasUpdate_nIP_Data[1].ToString(); }
+            set { MidasUpdate_nIP_Data[1] = value; }
+        }
+        public string ClientV
+        {
+            get { return MidasUpdate_nIP_Data[2].ToString(); }
+            set { MidasUpdate_nIP_Data[2] = value; }
+        }
+        public string ClientMac
+        {
+            get { return MidasUpdate_nIP_Data[3].ToString(); }
+            set { MidasUpdate_nIP_Data[3] = value; }
+        }
+        public string ClientIP
+        {
+            get { return MidasUpdate_nIP_Data[4].ToString(); }
+            set { MidasUpdate_nIP_Data[4] = value; }
+        }
+        public string ServerIP
+        {
+            get { return MidasUpdate_nIP_Data[5].ToString(); }
+            set { MidasUpdate_nIP_Data[5] = value; }
+        }
+        public string NProduct
+        {
+            get { return MidasUpdate_nIP_Data[6].ToString(); }
+            set { MidasUpdate_nIP_Data[6] = value; }
+        }
+        public string NBuildNum
+        {
+            get { return MidasUpdate_nIP_Data[7].ToString(); }
+            set { MidasUpdate_nIP_Data[7] = value; }
+        }
+        public string NLang
+        {
+            get { return MidasUpdate_nIP_Data[8].ToString(); }
+            set { MidasUpdate_nIP_Data[8] = value; }
+        }
+        public string NVer1
+        {
+            get { return MidasUpdate_nIP_Data[9].ToString(); }
+            set { MidasUpdate_nIP_Data[9] = value; }
+        }
+        public string NVer2
+        {
+            get { return MidasUpdate_nIP_Data[10].ToString(); }
+            set { MidasUpdate_nIP_Data[10] = value; }
+        }
+        public string NVer3
+        {
+            get { return MidasUpdate_nIP_Data[11].ToString(); }
+            set { MidasUpdate_nIP_Data[11] = value; }
+        }
+        public string NLic1
+        {
+            get { return MidasUpdate_nIP_Data[12].ToString(); }
+            set { MidasUpdate_nIP_Data[12] = value; }
+        }
+        public string NLic2
+        {
+            get { return MidasUpdate_nIP_Data[13].ToString(); }
+            set { MidasUpdate_nIP_Data[13] = value; }
+        }
+        public string NLic3
+        {
+            get { return MidasUpdate_nIP_Data[14].ToString(); }
+            set { MidasUpdate_nIP_Data[14] = value; }
+        }
+        public string NCRKC
+        {
+            get { return MidasUpdate_nIP_Data[15].ToString(); }
+            set { MidasUpdate_nIP_Data[15] = value; }
+        }
+        public string StrLKNum
+        {
+            get { return MidasUpdate_nIP_Data[16].ToString(); }
+            set { MidasUpdate_nIP_Data[16] = value; }
+        }
+        public string Chk_client
+        {
+            get { return MidasUpdate_nIP_Data[17].ToString(); }
+            set { MidasUpdate_nIP_Data[17] = value; }
+        }
+        public string StrName
+        {
+            get { return MidasUpdate_nIP_Data[18].ToString(); }
+            set { MidasUpdate_nIP_Data[18] = value; }
+        }
+        public string StrCountry
+        {
+            get { return MidasUpdate_nIP_Data[19].ToString(); }
+            set { MidasUpdate_nIP_Data[19] = value; }
+        }
+        public string TxtWhois
+        {
+            get { return MidasUpdate_nIP_Data[20].ToString(); }
+            set { MidasUpdate_nIP_Data[20] = value; }
+        }
+        public string StrMussID
+        {
+            get { return MidasUpdate_nIP_Data[21].ToString(); }
+            set { MidasUpdate_nIP_Data[21] = value; }
+        }
+        public string ExtLod
+        {
+            get { return MidasUpdate_nIP_Data[22].ToString(); }
+            set { MidasUpdate_nIP_Data[22] = value; }
+        }
+        public string PLFInfo
+        {
+            get { return MidasUpdate_nIP_Data[23].ToString(); }
+            set { MidasUpdate_nIP_Data[23] = value; }
+        }
+        public string ULog
+        {
+            get { return MidasUpdate_nIP_Data[24].ToString(); }
+            set { MidasUpdate_nIP_Data[24] = value; }
+        }
+
+/*
         public string Regdate
         {
             get { return _regdate; }
@@ -161,7 +293,15 @@ namespace LogAnalyzer2
             get { return _ULog; }
             set { _ULog = value; }
         }
+*/
 
+        public MidasUpdate_nIP_T(object[] values)
+        {
+//            Array.Copy(values,  this.MidasUpdate_nIP_Data, values.Length+1);
+//            Buffer.BlockCopy(values, 0, this.MidasUpdate_nIP_Data, 0, values.Length);
+            this.MidasUpdate_nIP_Data = values;
+            MidasUpdate_nIP_Data[0] = MidasUpdate_nIP_Data[0].ToString().Replace("/", "-");
+        }
 
         public MidasUpdate_nIP_T()
         {
@@ -170,6 +310,7 @@ namespace LogAnalyzer2
 
         private void Initialize()
         {
+/*
             this._regdate = string.Empty;
             this._index_id = string.Empty;
             this._ClientV = string.Empty;
@@ -196,6 +337,7 @@ namespace LogAnalyzer2
             this._PLFInfo = string.Empty;
             this._ULog = string.Empty;
             this._MacAddress = string.Empty;
+*/
         }
 
         public string GetMacAddress()

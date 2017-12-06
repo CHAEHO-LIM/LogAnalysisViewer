@@ -44,13 +44,13 @@ namespace LogAnalyzer2
 
             if (_inputParam.strFilterCompany != string.Empty)
             {
-                if (_inputParam.strFilterCompany != this.Company)
+                if (!this.Company.ToLower().Contains(_inputParam.strFilterCompany.ToLower()) )
                     return false;
             }
 
             if (_inputParam.strFilterUserID != string.Empty)
             {
-                if (_inputParam.strFilterUserID != this.UserID)
+                if (!this.UserID.ToLower().Contains(_inputParam.strFilterUserID.ToLower()))
                     return false;
             }
 

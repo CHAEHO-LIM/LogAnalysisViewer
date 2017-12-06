@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,6 +12,8 @@ using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 
+using System.Collections;
+
 namespace LogAnalyzer2
 {
 
@@ -22,11 +25,13 @@ namespace LogAnalyzer2
         string sDateFrom = "";
         bool buttonUpdateStatus = false;
 
+        bool MouseMoveFlg = false;
+
         public MainForm()
         {
             InitializeComponent();
 
-            if (Constants.FLG_LOCAL)
+            if (!Constants.FLG_UPDATE)
             {
                 MessageBox.Show("ローカル環境で実行します。\r\nサーバーには接続しません。",
                     "注意！",
@@ -47,14 +52,45 @@ namespace LogAnalyzer2
             this.dateTimePickerTo.Value = DateTime.Now;
             this.comboBoxCountry.SelectedIndex = 0;
             this.comboBoxProduct.SelectedIndex = 0;
-
-            this.listViewResult.View = View.Details;
-            this.listViewResult.GridLines = true;
-            this.listViewResult.FullRowSelect = true;
         }
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
+/*
+            //Stopwatchオブジェクトを作成する
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            //ストップウォッチを開始する
+            sw.Start();
+*/
+            TimeSpan tSpan = DateTime.Now - dateTimePickerTo.Value;
+
+            String s = "";
+            if (tSpan.Seconds < 0)
+            {
+                s = "Please specify the date until today.\n";
+            }
+
+            DateTime tNow = DateTime.Now;
+
+            tSpan = dateTimePickerFrom.Value - tNow.AddMonths(-3);
+            if (tSpan.Days < 0)
+            {
+                s = s + "Please specify the date up to 3 months ago.\n";
+            }
+
+            tSpan = dateTimePickerTo.Value - dateTimePickerFrom.Value;
+            if (tSpan.Seconds < 0)
+            {
+                s = s + "The start and end periods are reversed.";
+            }
+
+            if (s.Length > 0)
+            {
+                MessageBox.Show(s);
+//                sw.Stop(); 
+                return;
+            }
+
             buttonUpdateSet();
 
             buttonUpdate.Enabled = false;
@@ -71,46 +107,63 @@ namespace LogAnalyzer2
                 MessageBox.Show("Database Connection is Success!");
                 buttonUpdate.Enabled = true;
                 buttonUpdateStatus = true;
+
+//                RegistrySet();
+
             }
 
+//            sw.Stop();
+            //結果を表示する
+//            string ss = string.Format("Time={0}", sw.Elapsed.ToString());
+//            MessageBox.Show(ss);
+
+
             this.progressBar1.Value = 0;
+
+
         }
 
         private void buttonUpdate_Click(object sender, EventArgs e)
         {
             InputParam param = GetInputParam();
 
-            listViewResult.Clear();
-            ResultListView listVeiw = new ResultListView(param, this.listViewResult);
+            dataGridViewResult.Columns.Clear();
+            ResultGridView gridVeiw = new ResultGridView(param, this.dataGridViewResult);
             
+            Constants.bDetailFlg = false;
             if (this.radioButtonUseLog.Checked == true)
             {
                 if (this.radioButtonByVersion.Checked == true)
                 {
-                    listVeiw.ShowUseLogByBersion(param);
+                    gridVeiw.ShowUseLogByBersion(param);
+                    Constants.nViewType = 1;
                 }
                 else if (this.radioButtonByCompany.Checked == true)
                 {
-                    listVeiw.ShowUseLogByCompany(param);
+                    gridVeiw.ShowUseLogByCompany(param);
+                    Constants.bDetailFlg = true;
+                    Constants.nViewType = 2;
                 }
             }
             else if (this.radioButtonFunctionLog.Checked == true)
             {
                 if (this.radioButtonByVersion.Checked == true)
                 {
-                    listVeiw.ShowFunctionLogByVersion(param);
+                    gridVeiw.ShowFunctionLogByVersion(param);
+                    Constants.nViewType = 3;
                 }
                 else if (this.radioButtonByCompany.Checked == true)
                 {
-                    listVeiw.ShowFunctionLogByCompany(param);
+                    gridVeiw.ShowFunctionLogByCompany(param);
+                    Constants.bDetailFlg = true;
+                    Constants.nViewType = 4;
                 }
             }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //            if (DBConnection.Instance.IsDbConnected() == true && MessageBox.Show("Do you want to save the database?", "caption", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-            if (Constants.FLG_LOCAL == false && DBConnection.Instance.IsDbConnected() == true && MessageBox.Show("Do you want to save the database?", "caption", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            if (Constants.FLG_UPDATE == true && Constants.bFirstConnect) //DBConnection.Instance.IsDbConnected() == true && MessageBox.Show("Do you want to save the database?", "caption", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
             {
                 DBConnection.Instance.SaveDatabase();
                 this.progressBar1.Value = 0;
@@ -188,9 +241,11 @@ namespace LogAnalyzer2
             saveFileDialog1.Filter = "Excel Files|*.xls*|All files|*.*";
             saveFileDialog1.Title = "Save an Excel File";
 
+            string ExcelFileName = "";
+
             if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                textBoxExcelFileName.Text = saveFileDialog1.FileName;
+                ExcelFileName = saveFileDialog1.FileName;
             }
             else
             {
@@ -200,8 +255,7 @@ namespace LogAnalyzer2
             Excel.Application ExcelApp = null;
             Excel.Workbook ExcelWorkBook = null;
             Excel.Worksheet ExcelWorkSheet = null;
-
-            string ExcelFileName = textBoxExcelFileName.Text;
+            //            string ExcelFileName = textBoxExcelFileName.Text;
 
             try
             {
@@ -214,30 +268,22 @@ namespace LogAnalyzer2
                 ExcelApp.Visible = false;
 
                 // エクセルファイルにデータをセットする
-                for (int i = 0; i < listViewResult.Columns.Count; i++)
+                for (int i = 0; i < dataGridViewResult.Columns.Count; i++)
                 {
                     // Excelのcell指定
-                    ExcelWorkSheet.Cells[1, i + 1] = listViewResult.Columns[i].Text;
+                    ExcelWorkSheet.Cells[1, i + 1] = dataGridViewResult.Columns[i].Name.ToString();
                 }
 
-                for (int i = 0; i < listViewResult.Items.Count; i++)
+                for (int i = 0; i < dataGridViewResult.Rows.Count; i++)
                 {
-                    for (int j = 0; j < listViewResult.Columns.Count; j++)
+                    for (int j = 0; j < dataGridViewResult.Columns.Count; j++)
                     {
-                        ExcelWorkSheet.Cells[i + 2,  j + 1] = listViewResult.Items[i].SubItems[j].Text;
+                        ExcelWorkSheet.Cells[i + 2, j + 1] = dataGridViewResult.Rows[i].Cells[j].Value;
                     }
                 }
-                /*
-                      finally
-                      {
-                        // Excelのオブジェクトはループごとに開放する
-                        Marshal.ReleaseComObject(ExcelWorkSheet);
-                        Marshal.ReleaseComObject(ExcelWorkBook);
-                        ExcelWorkBook = null;
-                      }
-                */
 
                 //excelファイルの保存
+                ExcelApp.DisplayAlerts = false;
                 ExcelWorkBook.SaveAs(@ExcelFileName);
                 ExcelWorkBook.Close(false);
                 ExcelApp.Quit();
@@ -257,13 +303,96 @@ namespace LogAnalyzer2
             }
 
         }
-    }
 
+        private void RegistrySet()
+        {
+            // レジストリに記録
+            DateTime dtToday = DateTime.Today;
+            //            dtToday.ToString("yyyy-MM-dd");
+
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\MIDAS\LogAnalyzer");
+            if (key != null)
+            {
+                key.SetValue("GetDate", dtToday.ToString("yyyy-MM-dd"));
+            }
+        }
+
+        private bool RegistryGet()
+        {
+            // レジストリから取得
+            bool bUpdate = true;
+            string s = "";
+
+            DateTime dtToday = DateTime.Today;
+            //            dtToday.ToString("yyyy-MM-dd");
+
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\MIDAS\LogAnalyzer");
+            if (key != null)
+            {
+                string[] valuesNames = key.GetValueNames();
+                if (valuesNames.Contains("GetDate"))
+                {
+                    s = key.GetValue("GetDate").ToString();
+
+                    if (s != dtToday.ToString("yyyy-MM-dd"))
+                        bUpdate = true;
+                    else
+                        bUpdate = false;
+                }
+            }
+
+            return true;
+//            return bUpdate;
+        }
+
+        private void dataGridViewResult_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                return;
+            }
+            if (Constants.bDetailFlg)
+            {
+                foreach (DataGridViewCell dataGV in dataGridViewResult.SelectedCells)
+                {
+                    string sID = "";
+                    sID = dataGridViewResult.Rows[dataGV.RowIndex].Cells[2].Value.ToString();
+                    string sComp = "";
+                    sComp = dataGridViewResult.Rows[dataGV.RowIndex].Cells[1].Value.ToString();
+
+                    DetailAnalysis DetAnalysis = new DetailAnalysis();
+                    DetAnalysis.SetDetailAnalysis(sID, sComp);
+                }
+            }
+
+        }
+
+        private void contextMenuStrip1_MouseClick(object sender, MouseEventArgs e)
+        {
+//            MessageBox.Show("TEST");
+        }
+
+        private void dataGridViewResult_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+    }
     static class Constants
     {
-        public const bool FLG_LOCAL = true;
-        //        public const bool FLG_LOCAL = false;
+        static public bool FLG_UPDATE = true;   // ローカル開発用
+//        static public bool FLG_UPDATE = false;   // ローカル開発用
+        //        public const bool FLG_UPDATE = false;
+
+        static public bool bDetailFlg = false;
+        static public bool bFirstConnect = false;
+        static public string sSort = "";
+        static public short nViewType = 0;
+        static public bool bSortAscending = false;
+
+        static public bool[] ReadFlg = Enumerable.Repeat<bool>(false,5).ToArray();
+        static public string ReadCollectString = "";
     }
 }
+
 
 

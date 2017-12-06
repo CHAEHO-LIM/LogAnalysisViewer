@@ -10,6 +10,7 @@ namespace LogAnalyzer2
 {
     public class V_Members_T
     {
+
         private string _id;
         private string _first_name;
         private string _last_name;
@@ -26,6 +27,92 @@ namespace LogAnalyzer2
         private string _area_code;
         private string _regist_datetime;
         private string _update_datetime;
+
+/*
+        private object[] V_Members_data;
+
+        public string Id
+        {
+            get { return V_Members_data[0].ToString(); }
+            set { V_Members_data[0] = value; }
+        }
+        public string First_name
+        {
+            get { return V_Members_data[1].ToString(); }
+            set { V_Members_data[1] = value; }
+        }
+        public string Last_name
+        {
+            get { return V_Members_data[2].ToString(); }
+            set { V_Members_data[2] = value; }
+        }
+        public string Eng_first_name
+        {
+            get { return V_Members_data[3].ToString(); }
+            set { V_Members_data[3] = value; }
+        }
+        public string Eng_last_name
+        {
+            get { return V_Members_data[4].ToString(); }
+            set { V_Members_data[4] = value; }
+        }
+        public string Email
+        {
+            get { return V_Members_data[5].ToString(); }
+            set { V_Members_data[5] = value; }
+        }
+        public string Mobile
+        {
+            get { return V_Members_data[6].ToString(); }
+            set { V_Members_data[6] = value; }
+        }
+        public string Fax
+        {
+            get { return V_Members_data[7].ToString(); }
+            set { V_Members_data[7] = value; }
+        }
+        public string Telephone
+        {
+            get { return V_Members_data[8].ToString(); }
+            set { V_Members_data[8] = value; }
+        }
+        public string Enterprise_name
+        {
+            get { return V_Members_data[9].ToString(); }
+            set { V_Members_data[9] = HttpUtility.HtmlDecode(value); }
+            //            set { _enterprise_name = value; }
+        }
+        public string Department_name
+        {
+            get { return V_Members_data[10].ToString(); }
+            set { V_Members_data[10] = value; }
+        }
+        public string Duty
+        {
+            get { return V_Members_data[11].ToString(); }
+            set { V_Members_data[11] = value; }
+        }
+        public string Address
+        {
+            get { return V_Members_data[12].ToString(); }
+            set { V_Members_data[12] = value; }
+        }
+        public string Area_code
+        {
+            get { return V_Members_data[13].ToString(); }
+            set { V_Members_data[13] = value; }
+        }
+        public string Regist_datetime
+        {
+            get { return V_Members_data[14].ToString(); }
+            set { V_Members_data[14] = value; }
+        }
+        public string Update_datetime
+        {
+            get { return V_Members_data[15].ToString(); }
+            set { V_Members_data[15] = value; }
+        }
+*/
 
         public string Id
         {
@@ -109,6 +196,14 @@ namespace LogAnalyzer2
             set { _update_datetime = value; }
         }
 
+
+/*
+        public V_Members_T(object[] values)
+        {
+            this.V_Members_data = values;
+            V_Members_data[9] = HttpUtility.HtmlDecode(V_Members_data[9].ToString());
+        }
+*/
         public V_Members_T()
         {
             Initialize();
@@ -116,6 +211,7 @@ namespace LogAnalyzer2
 
         private void Initialize()
         {
+
             this._id = string.Empty;
             this._first_name = string.Empty;
             this._last_name = string.Empty;
@@ -132,6 +228,7 @@ namespace LogAnalyzer2
             this._area_code = string.Empty;
             this._regist_datetime = string.Empty;
             this._update_datetime = string.Empty;
+
         }
     }
 }

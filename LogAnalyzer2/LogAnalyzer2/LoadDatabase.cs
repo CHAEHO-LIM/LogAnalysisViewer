@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 
+using System.Data;
+
 namespace LogAnalyzer2
 {
     public class LoadDatabase
@@ -26,20 +28,88 @@ namespace LogAnalyzer2
         {
             this._inputParam.progressBar.Style = ProgressBarStyle.Continuous;
             this._inputParam.progressBar.Minimum = 0;
-            this._inputParam.progressBar.Maximum = 16;
+            this._inputParam.progressBar.Maximum = 20;
             this._inputParam.progressBar.Step = 1;
             this._inputParam.progressBar.PerformStep();
 
-            if (GetDatabaseV_Node_Table() == false)
-                return false;
-            if (GetDatabaseV_Members_Table() == false)
-                return false;
-            if (GetDatabaseModuleID_Log() == false)
-                return false;
-            if (GetDatabaseTB_Log() == false)
-                return false;
-            if (GetDatabaseMidasUpdate_nIP() == false)
-                return false;
+            string NowReadCollectString = "";
+
+            NowReadCollectString += this._inputParam.strProductName + ",";
+            NowReadCollectString += this._inputParam.strCountry + ",";
+            NowReadCollectString += this._inputParam.strDateTimePickerTo + ",";
+            NowReadCollectString += this._inputParam.strDateTimePickerFrom + ",";
+
+            if (Constants.ReadCollectString != NowReadCollectString)
+            {
+                for (int i = 0; i < 5; i++)
+                    Constants.ReadFlg[i] = false;
+                Constants.ReadCollectString = NowReadCollectString;
+            }
+
+            if (Constants.ReadFlg[0] == false)
+            {
+                if (GetDatabaseV_Node_Table() == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    Constants.ReadFlg[0] = true;
+                }
+            }
+            if (this._inputParam.progressBar.Value < 4)
+            {
+                this._inputParam.progressBar.Value = 4;
+            }
+            
+            if (Constants.ReadFlg[1] == false)
+            {
+                if (GetDatabaseV_Members_Table() == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    Constants.ReadFlg[1] = true;
+                }
+            }
+            if (this._inputParam.progressBar.Value < 8)
+            {
+                this._inputParam.progressBar.Value = 8;
+            }
+
+            if (Constants.ReadFlg[3] == false)
+            {
+                if (GetDatabaseTB_Log() == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    Constants.ReadFlg[3] = true;
+                }
+            }
+            if (this._inputParam.progressBar.Value < 12)
+            {
+                this._inputParam.progressBar.Value = 12;
+            }
+
+            if (Constants.ReadFlg[4] == false)
+            {
+                if (GetDatabaseMidasUpdate_nIP() == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    Constants.ReadFlg[4] = true;
+                }
+            }
+            if (this._inputParam.progressBar.Value < 20)
+            {
+                this._inputParam.progressBar.Value = 20;
+            }
+
             return true;
         }
 
@@ -47,9 +117,8 @@ namespace LogAnalyzer2
         {
             DatabasePool.Instance.TB_Log_List.Clear();
             string strProgCode = GetStrProgCode();
-            int nProductNum = GetProductNum();
 
-            if (Constants.FLG_LOCAL)
+            if (!Constants.FLG_UPDATE)
             {
                 string strFilePath = Application.StartupPath + "\\V_TB_LOG_List.xml";
                 double dFromTimestamp = 0;
@@ -66,7 +135,6 @@ namespace LogAnalyzer2
                 string dayFrom = _inputParam.strDateTimePickerFrom;
                 string dayTo = _inputParam.strDateTimePickerTo;
                 string strLangCode = GetStrLangCode();
-//                string strProgCode = GetStrProgCode();
 
                 string quary = string.Format("SELECT * FROM TB_Log WHERE strLangCode='{0}' AND strProgCode='{1}' AND dSDate>='{2}' AND dSDate<='{3}' ORDER BY dSDate ASC;", strLangCode, strProgCode, dayFrom, dayTo);
 
@@ -77,6 +145,11 @@ namespace LogAnalyzer2
 
                     using (SqlConnection conn = new SqlConnection(strConn))
                     {
+//Stopwatchオブジェクトを作成する
+// System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+ //ストップウォッチを開始する
+// sw.Start();
+
                         conn.Open();
                         this._inputParam.progressBar.PerformStep();
                         SqlCommand cmd = new SqlCommand();
@@ -85,37 +158,60 @@ namespace LogAnalyzer2
                         SqlDataReader rdr = cmd.ExecuteReader();
                         this._inputParam.progressBar.PerformStep();
 
+// sw.Stop();
+ //結果を表示する
+// MessageBox.Show(sw.Elapsed.ToString());
+ //Console.Write(sw.Elapsed);  
+
+//Stopwatchオブジェクトを作成する
+//System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
+//ストップウォッチを開始する
+//sw2.Start();
+
                         while (rdr.Read())
                         {
-                            TB_Log_T data = new TB_Log_T();
-                            data.Idx = rdr["idx"].ToString();
-                            data.DSDate = rdr["dSDate"].ToString();
-                            data.DSDate = data.DSDate.Replace("/", "-");
-                            data.DEDate = rdr["dEDate"].ToString();
-                            data.DEDate = data.DEDate.Replace("/", "-");
-                            data.StrLogCode = rdr["strLogCode"].ToString();
-                            data.StrLogString = rdr["strLogString"].ToString();
-                            data.IdxRealConn = rdr["idxRealConn"].ToString();
-                            data.StrCMD = rdr["strCMD"].ToString();
-                            data.StrID = rdr["strID"].ToString();
-                            data.StrPWD = rdr["strPWD"].ToString();
-                            data.StrIP = rdr["strIP"].ToString();
-                            data.StrMac = rdr["strMac"].ToString();
-                            data.StrPID = rdr["strPID"].ToString();
-                            data.StrLangCode = rdr["strLangCode"].ToString();
-                            data.StrProgCode = rdr["strProgCode"].ToString();
-                            data.StrVersion = rdr["strVersion"].ToString();
-                            data.NUseOpt = rdr["nUseOpt"].ToString();
-                            data.NUseOpt2 = rdr["nUseOpt2"].ToString();
-                            data.NUseOpt3 = rdr["nUseOpt3"].ToString();
-                            data.NUseOpt4 = rdr["nUseOpt4"].ToString();
-                            data.NNationalOpt = rdr["nNationalOpt"].ToString();
-                            data.StrProtectKey = rdr["strProtectKey"].ToString();
+//                            if( !(strProgCode == "MDW" && rdr["strVersion"].ToString() != "210"))
+                            {
+                                TB_Log_T data = new TB_Log_T();
 
-                            DatabasePool.Instance.TB_Log_List.Add(data);
+                                data.Idx = rdr["idx"].ToString();
+                                data.DSDate = rdr["dSDate"].ToString();
+                                data.DSDate = data.DSDate.Replace("/", "-");
+                                data.DEDate = rdr["dEDate"].ToString();
+                                data.DEDate = data.DEDate.Replace("/", "-");
+                                data.StrLogCode = rdr["strLogCode"].ToString();
+                                data.StrLogString = rdr["strLogString"].ToString();
+                                data.IdxRealConn = rdr["idxRealConn"].ToString();
+                                data.StrCMD = rdr["strCMD"].ToString();
+                                data.StrID = rdr["strID"].ToString();
+                                data.StrPWD = rdr["strPWD"].ToString();
+                                data.StrIP = rdr["strIP"].ToString();
+                                data.StrMac = rdr["strMac"].ToString();
+                                data.StrPID = rdr["strPID"].ToString();
+                                data.StrLangCode = rdr["strLangCode"].ToString();
+                                data.StrProgCode = rdr["strProgCode"].ToString();
+                                data.StrVersion = rdr["strVersion"].ToString();
+                                data.NUseOpt = rdr["nUseOpt"].ToString();
+                                data.NUseOpt2 = rdr["nUseOpt2"].ToString();
+                                data.NUseOpt3 = rdr["nUseOpt3"].ToString();
+                                data.NUseOpt4 = rdr["nUseOpt4"].ToString();
+                                data.NNationalOpt = rdr["nNationalOpt"].ToString();
+                                data.StrProtectKey = rdr["strProtectKey"].ToString();
+
+
+                                DatabasePool.Instance.TB_Log_List.Add(data);
+                            }
                         }
+                        rdr.Close();
 
                         this._inputParam.progressBar.PerformStep();
+
+///////////////////////////////////                        //ストップウォッチを止める
+//                        sw2.Stop();
+                        //結果を表示する
+//                        string s = string.Format("Connect={0},DB Copy={1}", sw.Elapsed.ToString(), sw2.Elapsed.ToString());
+//                        MessageBox.Show(s,"TB_Log");
+//                        Console.Write(sw.Elapsed);                    
                     }
                 }
                 catch (Exception ex)
@@ -124,37 +220,17 @@ namespace LogAnalyzer2
                     return false;
                 }
 
-            }
 /*
-            // ローカル開発用に機能ログ保存
-            string strFilePath = Application.StartupPath + "\\V_TB_LOG_List.xml";
+                // ローカル開発用に機能ログ保存
+                string strFilePath = Application.StartupPath + "\\V_TB_LOG_List.xml";
 
-            XmlSerializer serializer = new XmlSerializer(typeof(List<TB_Log_T>));
-            FileStream fs = new FileStream(strFilePath, FileMode.Create);
-            serializer.Serialize(fs, DatabasePool.Instance.TB_Log_List);
-            fs.Close();
+                XmlSerializer serializer = new XmlSerializer(typeof(List<TB_Log_T>));
+                FileStream fs = new FileStream(strFilePath, FileMode.Create);
+                serializer.Serialize(fs, DatabasePool.Instance.TB_Log_List);
+                fs.Close();
 */
-
-/*            
-            // Drawing の場合は、CADロボ と Drawing の判定をする
-            if (strProgCode == "MDW")
-            {
-                if (nProductNum == 77)
-                {
-                    // CADロボ
-                    foreach (string data in DatabasePool.Instance.ModuleID_Log_Dic[])
-                    {
-                        DatabasePool.Instance.TB_Log_List.Remove(x => x.strPID == 2);
-                    }
-                }
-                else
-                {
-                    // Drawing
-                    DatabasePool.Instance.TB_Log_List.Add(data);
-                }
-
             }
-*/
+
             return (DatabasePool.Instance.TB_Log_List.Count > 0);
         }
 
@@ -173,16 +249,7 @@ namespace LogAnalyzer2
                 MessageBox.Show(ex.Message);
                 return false;
             }
-/*
-            if (DatabasePool.Instance.TB_Log_List.Count > 0)
-            {
-                string strTime = DatabasePool.Instance.TB_Log_List[DatabasePool.Instance.TB_Log_List.Count - 1].Regist_timestamp;
 
-                double dVal = 0;
-                if (double.TryParse(strTime, out dVal) == true)
-                    dFromTimestamp = dVal;
-            }
-*/
             return (DatabasePool.Instance.TB_Log_List.Count > 0);
         }
 
@@ -190,7 +257,7 @@ namespace LogAnalyzer2
         {
             DatabasePool.Instance.MidasUpdate_nIP_List.Clear();
 
-            if (Constants.FLG_LOCAL)
+            if (!Constants.FLG_UPDATE)
             {
                 string strFilePath = Application.StartupPath + "\\V_MidasUpdate_List.xml";
                 double dFromTimestamp = 0;
@@ -221,6 +288,12 @@ namespace LogAnalyzer2
                         CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
                     using (SqlConnection conn = new SqlConnection(strConn))
                     {
+
+                        //Stopwatchオブジェクトを作成する
+//                        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                        //ストップウォッチを開始する
+//                        sw.Start();
+                        
                         conn.Open();
                         this._inputParam.progressBar.PerformStep();
                         SqlCommand cmd = new SqlCommand();
@@ -229,9 +302,25 @@ namespace LogAnalyzer2
                         SqlDataReader rdr = cmd.ExecuteReader();
                         this._inputParam.progressBar.PerformStep();
 
+ ///////////////////////////////////                        //ストップウォッチを止める
+ //                       sw.Stop();
+
+
+//Stopwatchオブジェクトを作成する
+//            System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
+//ストップウォッチを開始する
+//            sw2.Start();
+
+
+
                         while (rdr.Read())
                         {
-                            MidasUpdate_nIP_T data = new MidasUpdate_nIP_T();
+                            Object[] values = new Object[rdr.FieldCount];
+                            rdr.GetValues(values);
+
+                            MidasUpdate_nIP_T data = new MidasUpdate_nIP_T(values);
+
+/*
                             data.Regdate = rdr["regdate"].ToString();
                             data.Regdate = data.Regdate.Replace("/", "-");
                             data.Index_id = rdr["index_id"].ToString();
@@ -256,12 +345,21 @@ namespace LogAnalyzer2
                             data.StrMussID = rdr["strMussID"].ToString();
                             data.ExtLod = rdr["ExtLod"].ToString();
                             data.PLFInfo = rdr["PLFInfo"].ToString();
-                            data.ULog = rdr["ULog"].ToString();
-
+                            \data.ULog = rdr["ULog"].ToString();
+*/
                             DatabasePool.Instance.MidasUpdate_nIP_List.Add(data);
                         }
+                        rdr.Close();
+
                         this._inputParam.progressBar.PerformStep();
-                    }
+///////////////////////////////////                        //ストップウォッチを止める
+/*
+                        sw2.Stop();
+       //結果を表示する
+       string s = string.Format("Connect={0},DB Copy={1}", sw.Elapsed.ToString(), sw2.Elapsed.ToString());
+//       MessageBox.Show(s, "MidasUpdate_nIP");
+//       Console.Write(sw.Elapsed);    
+*/                    }
                 }
                 catch (Exception ex)
                 {
@@ -269,15 +367,6 @@ namespace LogAnalyzer2
                     return false;
                 }
             }
-/*
-            // ローカル開発用に使用ログ保存
-            string strFilePath = Application.StartupPath + "\\V_MidasUpdate_List.xml";
-
-            XmlSerializer serializer = new XmlSerializer(typeof(List<MidasUpdate_nIP_T>));
-            FileStream fs = new FileStream(strFilePath, FileMode.Create);
-            serializer.Serialize(fs, DatabasePool.Instance.MidasUpdate_nIP_List);
-            fs.Close();
-*/
 
             return (DatabasePool.Instance.MidasUpdate_nIP_List.Count >= 0);
         }
@@ -297,22 +386,13 @@ namespace LogAnalyzer2
                 MessageBox.Show(ex.Message);
                 return false;
             }
-            /*
-                        if (DatabasePool.Instance.TB_Log_List.Count > 0)
-                        {
-                            string strTime = DatabasePool.Instance.TB_Log_List[DatabasePool.Instance.TB_Log_List.Count - 1].Regist_timestamp;
 
-                            double dVal = 0;
-                            if (double.TryParse(strTime, out dVal) == true)
-                                dFromTimestamp = dVal;
-                        }
-            */
             return (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0);
         }
 
         private bool GetDatabaseV_Node_Table()
         {
-            DatabasePool.Instance.V_Node_List.Clear();
+            DatabasePool.Instance.V_Node_Dic.Clear();
 
             string strFilePath = Application.StartupPath + "\\V_Node_List.xml";
             double dFromTimestamp = 0;
@@ -329,8 +409,12 @@ namespace LogAnalyzer2
                 
             }
 
-            if (!Constants.FLG_LOCAL)
+            DateTime dt =ConvertFromUnixTimestamp(dFromTimestamp);
+            DateTime dtToday = DateTime.Today;
+            if (Constants.FLG_UPDATE && dt.ToString("yyyy-MM-dd") != dtToday.ToString("yyyy-MM-dd"))
             {
+                Constants.bFirstConnect = true;
+
                 List<V_Node_T> nodeList = new List<V_Node_T>();
                 double dNowTimestamp = ConvertToUnixTimestamp(DateTime.Now);
 
@@ -353,6 +437,7 @@ namespace LogAnalyzer2
                         while (rdr.Read())
                         {
                             V_Node_T data = new V_Node_T();
+
                             data.Enterprise_code = rdr["enterprise_code"].ToString();
                             data.Enterprise_name = rdr["enterprise_name"].ToString();
                             data.Department_code = rdr["department_code"].ToString();
@@ -367,6 +452,8 @@ namespace LogAnalyzer2
 
                             nodeList.Add(data);
                         }
+                        rdr.Close();
+
                         this._inputParam.progressBar.PerformStep();
                     }
                 }
@@ -375,20 +462,34 @@ namespace LogAnalyzer2
                     MessageBox.Show(ex.Message);
                     return false;
                 }
+  
+                foreach (V_Node_T nList in nodeList)
+                {
+                    if (DatabasePool.Instance.V_Node_Dic.ContainsKey(nList.Id) == false)
+                    {
+                        //                        nodeList = nodeList.DistinctBy(x => x.Id);
+                        DatabasePool.Instance.V_Node_Dic.Add(nList.Id, nList);
 
-                DatabasePool.Instance.V_Node_List.AddRange(nodeList);
+                    }
+                }
+
             }
 
-            return (DatabasePool.Instance.V_Node_List.Count > 0);
+            return (DatabasePool.Instance.V_Node_Dic.Count > 0);
         }
 
         private bool LoadV_Node_Table_XML(string strFilePath, ref double dFromTimestamp)
         {
+
+            List<V_Node_T> nodeList = new List<V_Node_T>();
+            DatabasePool.Instance.V_Node_Dic.Clear();
+
             try
             {
+
                 XmlSerializer deSerializer = new XmlSerializer(typeof(List<V_Node_T>));
                 StreamReader reader = new StreamReader(strFilePath);
-                DatabasePool.Instance.V_Node_List = (List<V_Node_T>)deSerializer.Deserialize(reader);
+                nodeList = (List<V_Node_T>)deSerializer.Deserialize(reader);
                 this._inputParam.progressBar.PerformStep();
                 reader.Close();
             }
@@ -398,16 +499,26 @@ namespace LogAnalyzer2
                 return false;
             }
 
-            if (DatabasePool.Instance.V_Node_List.Count > 0)
+            if (nodeList.Count > 0)
             {
-                string strTime = DatabasePool.Instance.V_Node_List[DatabasePool.Instance.V_Node_List.Count-1].Regist_timestamp;
+                string strTime = nodeList[nodeList.Count - 1].Regist_timestamp;
 
                 double dVal = 0;
                 if (double.TryParse(strTime, out dVal) == true)
                     dFromTimestamp = dVal;
+
+                foreach (V_Node_T nList in nodeList)
+                {
+                    if (DatabasePool.Instance.V_Node_Dic.ContainsKey(nList.Id) == false)
+                    {
+                        DatabasePool.Instance.V_Node_Dic.Add( nList.Id,nList);
+
+                    }
+                }
+ 
             }
 
-            return (DatabasePool.Instance.V_Node_List.Count > 0);
+            return (DatabasePool.Instance.V_Node_Dic.Count > 0);
         }
 
         private bool GetDatabaseV_Members_Table()
@@ -431,8 +542,10 @@ namespace LogAnalyzer2
                 strRegist_datetime = origin.ToString(strDatatimeDbPattern, culture);
             }
 
-            if (!Constants.FLG_LOCAL)
+            DateTime dtToday = DateTime.Today;//.ToString(),"yyyy-MM-dd hh:mm:ss tt",null);
+            if (Constants.FLG_UPDATE && dtToday.ToString("yyyy-MM-dd") != DateTime.Parse(strRegist_datetime).ToString("yyyy-MM-dd") )
             {
+                Constants.bFirstConnect = true;
 
                 if (GetDatabaseV_Members_AddedTable(strRegist_datetime) == false)
                     return false;
@@ -511,6 +624,7 @@ namespace LogAnalyzer2
                     while (rdr.Read())
                     {
                         V_Members_T data = new V_Members_T();
+
                         data.Id = rdr["id"].ToString();
                         data.First_name = rdr["first_name"].ToString();
                         data.Last_name = rdr["last_name"].ToString();
@@ -564,6 +678,8 @@ namespace LogAnalyzer2
 
                         memberList.Add(data);
                     }
+                    rdr.Close();
+
                     this._inputParam.progressBar.PerformStep();
                 }
             }
@@ -616,6 +732,7 @@ namespace LogAnalyzer2
                     while (rdr.Read())
                     {
                         V_Members_T data = new V_Members_T();
+
                         data.Id = rdr["id"].ToString();
                         data.First_name = rdr["first_name"].ToString();
                         data.Last_name = rdr["last_name"].ToString();
@@ -630,6 +747,7 @@ namespace LogAnalyzer2
                         data.Duty = rdr["duty"].ToString();
                         data.Address = rdr["address"].ToString();
                         data.Area_code = rdr["area_code"].ToString();
+
 
                         string pattern = "yyyy-MM-dd tt h:m:s";
                         string pattern2 = "yyyy/MM/dd H:m:s";
@@ -670,6 +788,8 @@ namespace LogAnalyzer2
 
                         memberList.Add(data);
                     }
+                    rdr.Close();
+
                     this._inputParam.progressBar.PerformStep();
                 }
             }
@@ -694,134 +814,13 @@ namespace LogAnalyzer2
             return true;
         }
 
-//* 20171024 */
-        private bool GetDatabaseModuleID_Log()
-        {
-            //Stopwatchオブジェクトを作成する
-//            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            //ストップウォッチを開始する
-//            sw.Start();
-
-            DatabasePool.Instance.ModuleID_Log_Dic.Clear();
-            List<ModuleID_Log_T> ModuleIDList = new List<ModuleID_Log_T>();
-
-            if (Constants.FLG_LOCAL)
-            {
-                string strFilePath = Application.StartupPath + "\\V_ModuleID_LOG_Dic.xml";
-                double dFromTimestamp = 0;
-
-                if (File.Exists(strFilePath) == true)
-                {
-                    if (LoadV_ModuleID_Log_Table_XML(strFilePath, ref dFromTimestamp) == false)
-                        return false;
-                }
-            }
-            else
-            {
-                string dayFrom = _inputParam.strDateTimePickerFrom;
-                string dayTo = _inputParam.strDateTimePickerTo;
-                string strLangCode = GetStrLangCode();
-                string strProgCode = GetStrProgCode();
-
-                string quary = string.Format("SELECT TBSS.strPID AS strPID, RTBLS.nProductID AS nProductID FROM [midasit.co.kr.mms2]..TB_SalesSummary AS TBSS INNER JOIN [midasit.co.kr.mms2]..RTB_LockSales AS RTBLS ON RTBLS.idxRTBLockSales=TBSS.idxRTBLockSales WHERE  RTBLS.strLockCode like N'WWeb%'");
-
-                try
-                {
-                    string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
-                        CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
-                    using (SqlConnection conn = new SqlConnection(strConn))
-                    {
-                        conn.Open();
-                        this._inputParam.progressBar.PerformStep();
-                        SqlCommand cmd = new SqlCommand();
-                        cmd.Connection = conn;
-                        cmd.CommandText = quary;
-                        SqlDataReader rdr = cmd.ExecuteReader();
-                        this._inputParam.progressBar.PerformStep();
-
-                        while (rdr.Read())
-                        {
-                            ModuleID_Log_T data = new ModuleID_Log_T();
-                            data.strPID = rdr["strPID"].ToString();
-                            data.nProductID = rdr["nProductID"].ToString();
-
-                            ModuleIDList.Add(data);
-                        }
-
-                        this._inputParam.progressBar.PerformStep();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message + "\r\nModuleID の失敗です。");
-                    return false;
-                }
-
-/*
-                foreach (ModuleID_Log_T ModuleID in ModuleIDList)
-                {
-                    DatabasePool.Instance.TB_Log_List.Find(x => x.StrPID == ModuleID.strPID);
-                    {
-                        DatabasePool.Instance.ModuleID_Log_Dic[ModuleID.strPID] = ModuleID;
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.Assert(false, "IDは複数存在出来ません。");
-                    }
-                }
-*/
-
-
-                //ストップウォッチを止める
-//                sw.Stop();
-
-                //結果を表示する
-//                Console.Write(sw.Elapsed);
-
-
-
-            }
-
-            string sModule = "";
-            int nProductNum = GetProductNum();
-            if (nProductNum == 77)
-            {
-                // CADロボ
-                sModule = "3";
-            }
-            else if (nProductNum == 102)
-            {
-                // Drawing
-                sModule = "2";
-            }
-            //                ModuleIDList = ModuleIDList.FindAll( n => ModuleIDList.Exists(m => n.strPID.Contains("MDW")));    // 時間がかかりすぎ
-            ModuleIDList = ModuleIDList.FindAll(x => x.nProductID == sModule);
-            DatabasePool.Instance.ModuleID_Log_Dic = ModuleIDList.ToDictionary(n => n.strPID.ToString());
-
-
-            //                urlList.RemoveAll(url => downLoadedList.Exists(dl => url.Contains(dl)));
-
-
-
-            /*
-                        // ローカル開発用に機能ログ保存
-            string strFilePath2 = Application.StartupPath + "\\V_ModuleID_LOG_Dic.xml";
-
-            XmlSerializer serializer = new XmlSerializer(typeof(Dictionary<string,ModuleID_Log_T>));
-                        FileStream fs = new FileStream(strFilePath2, FileMode.Create);
-                        serializer.Serialize(fs, DatabasePool.Instance.ModuleID_Log_Dic);
-                        fs.Close();
-            */
-            return (DatabasePool.Instance.ModuleID_Log_Dic.Count > 0);
-        }
-
-        private bool LoadV_ModuleID_Log_Table_XML(string strFilePath, ref double dFromTimestamp)
+        private bool LoadV_ModuleID_Log_Table_XML(string strFilePath, ref List<ModuleID_Log_T> moduleid_List)
         {
             try
             {
                 XmlSerializer deSerializer = new XmlSerializer(typeof(List<ModuleID_Log_T>));
                 StreamReader reader = new StreamReader(strFilePath);
-                DatabasePool.Instance.ModuleID_Log_Dic = (Dictionary<string,ModuleID_Log_T>)deSerializer.Deserialize(reader);
+                moduleid_List = (List<ModuleID_Log_T>)deSerializer.Deserialize(reader);
                 this._inputParam.progressBar.PerformStep();
                 reader.Close();
             }
@@ -830,28 +829,34 @@ namespace LogAnalyzer2
                 MessageBox.Show(ex.Message);
                 return false;
             }
-            /*
-                        if (DatabasePool.Instance.TB_Log_List.Count > 0)
-                        {
-                            string strTime = DatabasePool.Instance.TB_Log_List[DatabasePool.Instance.TB_Log_List.Count - 1].Regist_timestamp;
 
-                            double dVal = 0;
-                            if (double.TryParse(strTime, out dVal) == true)
-                                dFromTimestamp = dVal;
-                        }
-            */
-            return (DatabasePool.Instance.ModuleID_Log_Dic.Count > 0);
+            return (moduleid_List.Count > 0);
         }
 //* 20171024 */
 
         private int GetProductNum()
         {
-            if (_inputParam.strProductName == "CADRobo(Drawing)")
-                return 77;
-            else if (_inputParam.strProductName == "midasDrawing")
-                return 102;
-            //             else if(this.comboBoxProduct.SelectedItem.ToString() == "midasEGen")
-            //                 return 77;
+
+            string s = _inputParam.strProductName;
+
+            switch (s)
+            {
+                case "CADRobo(Drawing)":
+                    return 102;
+                    break;
+                case "CADRobo(eGen)":
+                    return -1;
+                    break;
+                case "midas Drawing":
+                    return 77;
+                    break;
+                case "midas eGen":
+                    return -1;
+                    break;
+                case "midas iGen":
+                    return -1;
+                    break;
+            }
 
             return 0;
         }
@@ -868,10 +873,27 @@ namespace LogAnalyzer2
 
         private string GetStrProgCode()
         {
-            if (_inputParam.strProductName == "CADRobo(Drawing)")
-                return "MDW";
-            else if (_inputParam.strProductName == "midasDrawing")
-                return "MDW";
+
+            string s = _inputParam.strProductName;
+
+            switch (s)
+            {
+                case "CADRobo(Drawing)":
+                    return "MDW";
+                    break;
+                case "CADRobo(eGen)":
+                    return "EGN";
+                    break;
+                case "midas Drawing":
+                    return "MDR";
+                    break;
+                case "midas eGen":
+                    return "EGR";
+                    break;
+                case "midas iGen":
+                    return "IGN";
+                    break;
+            }
 
             return string.Empty;
         }

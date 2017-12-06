@@ -117,7 +117,7 @@ namespace LogAnalyzer2
             _inputParam = param;
             LoadDatabase loadDB = new LoadDatabase(param);
             _isDbConnected = loadDB.Execute();
-            return _isDbConnected;
+           return _isDbConnected;
         }
 
         public bool IsDbConnected()
@@ -134,13 +134,17 @@ namespace LogAnalyzer2
                 {
                     //Key : Function Name , Value : Number of used count
                     Dictionary<string, uint> funcNumDic = new Dictionary<string,uint>();
-                    ConvertToFunctionTitleFromULog(data.ULog, ref funcNumDic);
+                    List<string>ErrorData1 = new List<string>();
+
+                    ConvertToFunctionTitleFromULog(data.ULog, ref funcNumDic, ref ErrorData1);
                     if (funcNumDic.Count < 1)
                         continue;
 
                     string strID = string.Empty;
                     string strCompany = string.Empty;
-                    SearchUserInfoFromMac(param, data.GetMacAddress(), ref strCompany, ref strID);
+
+                    List<string> ErrorData2 = new List<string>();
+                    SearchUserInfoFromMac(param, data.GetMacAddress(), ref strCompany, ref strID, ref ErrorData2);
 
                     LogFilter filter = new LogFilter(param);
                     filter.UserID = strID;
@@ -191,15 +195,15 @@ namespace LogAnalyzer2
             {
                 foreach (TB_Log_T data in DatabasePool.Instance.TB_Log_List)
                 {
-                    if (DatabasePool.Instance.ModuleID_Log_Dic.ContainsKey(data.StrPID))
-                    {
                         string strID = data.StrID;
 
                         List<string> userIds = new List<string>();
                         userIds.Add(strID);
 
                         string strCompany = string.Empty;
-                        SearchUserInfoFromIds(param, userIds, ref strCompany);
+
+                        List<string> ErrorData3 = new List<string>();
+                        SearchUserInfoFromIds(param, userIds, ref strCompany, ref ErrorData3);
 
                         LogFilter filter = new LogFilter(param);
                         filter.UserID = strID;
@@ -240,12 +244,11 @@ namespace LogAnalyzer2
 
                             resultDic.Add(strKey, result);
                         }
-                    }
                 }
             }
         }
 
-        private void ConvertToFunctionTitleFromULog(string strULog, ref Dictionary<string, uint> funcNumDic)
+        private void ConvertToFunctionTitleFromULog(string strULog, ref Dictionary<string, uint> funcNumDic, ref List<string>ErrData)
         {
             string[] separator = new string[] { ")" };
             string[] strArray = strULog.Split(separator, StringSplitOptions.None);
@@ -308,21 +311,19 @@ namespace LogAnalyzer2
             }
         }
 
-        private bool SearchUserInfoFromMac(InputParam param, string strMacAddress, ref string strCompany, ref string strID)
+        private bool SearchUserInfoFromMac(InputParam param, string strMacAddress, ref string strCompany, ref string strID, ref List<string> ErrData)
         {
             //Mac AddresでUserIDをTB_Log Tableで探す。
             List<string> userIds = new List<string>();
 
             foreach (TB_Log_T tbLogT in DatabasePool.Instance.TB_Log_List)
             {
-                if (DatabasePool.Instance.ModuleID_Log_Dic.ContainsKey(tbLogT.StrPID))
-                {
                     if (tbLogT.StrMac.Contains(strMacAddress) == true)
                     {
                         if (userIds.Contains(tbLogT.StrID) == false)
                             userIds.Add(tbLogT.StrID);
                     }
-                }
+                
             }
 
             if (userIds.Count < 1)
@@ -330,32 +331,36 @@ namespace LogAnalyzer2
                 if (this._nAssertCount3 < 1)
                 {
                     string message = string.Format("MacAddress: {0} に対するIDがないです。確認必要！", strMacAddress);
+                    ErrData.Add(strMacAddress);
                     System.Diagnostics.Debug.Assert(false, message);
+
                     this._nAssertCount3++;
                 }
                 
                 return false;
             }
-
-            SearchUserInfoFromIds(param, userIds, ref strCompany);
+            List<string> ErrorData4 = new List<string>();
+            SearchUserInfoFromIds(param, userIds, ref strCompany, ref ErrorData4);
 
             strID = GetMergeString(userIds, ",");
             return (strCompany != string.Empty && strID != string.Empty);
         }
 
-        private bool SearchUserInfoFromIds(InputParam param, List<string> userIds, ref string strCompany)
+        private bool SearchUserInfoFromIds(InputParam param, List<string> userIds, ref string strCompany, ref List<string>ErrData)
         {
             List<string> companyNames = new List<string>();
 
             if (param.strProductName != "CADRobo(Drawing)")
             {
+                // 20171026
+
                 //検索したUserIDでCompanyNameをV_Nodeで探す。
-                foreach (V_Node_T vNodeT in DatabasePool.Instance.V_Node_List)
+                foreach ( string UID in userIds )
                 {
-                    if (userIds.Contains(vNodeT.Id) == true)
+                    if (DatabasePool.Instance.V_Node_Dic.ContainsKey(UID) == true)
                     {
-                        if (companyNames.Contains(vNodeT.Enterprise_name) == false)
-                            companyNames.Add(vNodeT.Enterprise_name);
+                        if (companyNames.Contains(DatabasePool.Instance.V_Node_Dic[UID].Enterprise_name) == false)
+                            companyNames.Add(DatabasePool.Instance.V_Node_Dic[UID].Enterprise_name);
                     }
                 }
 
@@ -377,6 +382,8 @@ namespace LogAnalyzer2
                     if (this._nAssertCount4 < 1)
                     {
                         System.Diagnostics.Debug.Assert(false, "UserIDに対するCompany Nameがないです。確認必要！");
+                        ErrData.Add(id);
+//                        companyNames.Add("No Company");
                         this._nAssertCount4++;
                     }
                 }
@@ -447,9 +454,10 @@ namespace LogAnalyzer2
 
             this._inputParam.progressBar.PerformStep();
 
+            List<V_Node_T> nodeList = DatabasePool.Instance.V_Node_Dic.Values.ToList();
             XmlSerializer serializer1 = new XmlSerializer(typeof(List<V_Node_T>));
             FileStream fs1 = new FileStream(strFilePath1, FileMode.Create);
-            serializer1.Serialize(fs1, DatabasePool.Instance.V_Node_List);
+            serializer1.Serialize(fs1, nodeList);
             this._inputParam.progressBar.PerformStep();
             fs1.Close();
             this._inputParam.progressBar.PerformStep();
