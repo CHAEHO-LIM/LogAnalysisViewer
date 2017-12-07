@@ -318,7 +318,7 @@ namespace LogAnalyzer2
 
             foreach (TB_Log_T tbLogT in DatabasePool.Instance.TB_Log_List)
             {
-                    if (tbLogT.StrMac.Contains(strMacAddress) == true)
+                if (strMacAddress != null && tbLogT.StrMac.Contains(strMacAddress) == true)
                     {
                         if (userIds.Contains(tbLogT.StrID) == false)
                             userIds.Add(tbLogT.StrID);
