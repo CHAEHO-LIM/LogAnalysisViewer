@@ -8,7 +8,7 @@ namespace LogAnalyzer2
 {
     public class MidasUpdate_nIP_T
     {
-/*
+
         private string _regdate;
         private string _index_id;
         private string _ClientV;
@@ -34,11 +34,11 @@ namespace LogAnalyzer2
         private string _ExtLod;
         private string _PLFInfo;
         private string _ULog;
-*/ 
+
         //연산에 의한 결과 값
         private string _MacAddress;
 
-
+/*
         private object[] MidasUpdate_nIP_Data;
 
         public string Regdate
@@ -166,8 +166,8 @@ namespace LogAnalyzer2
             get { return MidasUpdate_nIP_Data[24].ToString(); }
             set { MidasUpdate_nIP_Data[24] = value; }
         }
+*/
 
-/*
         public string Regdate
         {
             get { return _regdate; }
@@ -293,14 +293,14 @@ namespace LogAnalyzer2
             get { return _ULog; }
             set { _ULog = value; }
         }
-*/
+
 
         public MidasUpdate_nIP_T(object[] values)
         {
-//            Array.Copy(values,  this.MidasUpdate_nIP_Data, values.Length+1);
-//            Buffer.BlockCopy(values, 0, this.MidasUpdate_nIP_Data, 0, values.Length);
-            this.MidasUpdate_nIP_Data = values;
-            MidasUpdate_nIP_Data[0] = MidasUpdate_nIP_Data[0].ToString().Replace("/", "-");
+////            Array.Copy(values,  this.MidasUpdate_nIP_Data, values.Length+1);
+////            Buffer.BlockCopy (values, 0, this.MidasUpdate_nIP_Data, 0, values.Length);
+//            this.MidasUpdate_nIP_Data = values;
+//            MidasUpdate_nIP_Data[0] = MidasUpdate_nIP_Data[0].ToString().Replace("/", "-");
         }
 
         public MidasUpdate_nIP_T()
@@ -310,7 +310,7 @@ namespace LogAnalyzer2
 
         private void Initialize()
         {
-/*
+
             this._regdate = string.Empty;
             this._index_id = string.Empty;
             this._ClientV = string.Empty;
@@ -337,7 +337,7 @@ namespace LogAnalyzer2
             this._PLFInfo = string.Empty;
             this._ULog = string.Empty;
             this._MacAddress = string.Empty;
-*/
+
         }
 
         public string GetMacAddress()
