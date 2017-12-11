@@ -9,11 +9,11 @@ namespace LogAnalyzer2
 {
     public class ModuleID_Log_T
     {
-/*
+
         private string _strPID;
         private string _nProductID;
-*/
 
+/*
         private object[] ModuleID_Log_data;
 
         public string strPID
@@ -26,8 +26,8 @@ namespace LogAnalyzer2
             get { return ModuleID_Log_data[1].ToString(); }
             set { ModuleID_Log_data[1] = value; }
         }
+*/
 
-/*
         public string strPID
         {
             get { return _strPID; }
@@ -38,13 +38,13 @@ namespace LogAnalyzer2
             get { return _nProductID; }
             set { _nProductID = value; }
         }
-*/
 
+/*
         public ModuleID_Log_T(object[] values)
         {
             this.ModuleID_Log_data = values;
         }
-
+*/
         public ModuleID_Log_T()
         {
             Initialize();
@@ -52,10 +52,10 @@ namespace LogAnalyzer2
 
         private void Initialize()
         {
-/*
+
             this._strPID = string.Empty;
             this._nProductID = string.Empty;
-*/
+
         }
     }
 }

@@ -288,7 +288,7 @@ namespace LogAnalyzer2
                 RowBuf[ColName[4]] = result._version;
 
                 // Number of days used
-                List<TB_Log_T> LogList = DatabasePool.Instance.TB_Log_List.FindAll(x => x.StrID ==result._id);
+                List<TB_Log_T> LogList = DatabasePool.Instance.TB_Log_List.FindAll(x => x.StrID == result._id);
 
                 List<String> DateList = new List<string>();
                 foreach (TB_Log_T LogT in LogList)
