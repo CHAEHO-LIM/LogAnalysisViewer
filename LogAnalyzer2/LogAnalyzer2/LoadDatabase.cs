@@ -167,7 +167,7 @@ namespace LogAnalyzer2
 //System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
 //ストップウォッチを開始する
 //sw2.Start();
-
+                        int aaa = 0;
                         while (rdr.Read())
                         {
 //                            if( !(strProgCode == "MDW" && rdr["strVersion"].ToString() != "210"))
@@ -184,6 +184,9 @@ namespace LogAnalyzer2
                                 data.IdxRealConn = rdr["idxRealConn"].ToString();
                                 data.StrCMD = rdr["strCMD"].ToString();
                                 data.StrID = rdr["strID"].ToString();
+                                if (data.StrID.ToString() == "tabuchi" || data.StrID.ToString() == "tabuchi.miyashita")
+                                    aaa = 0;
+
                                 data.StrPWD = rdr["strPWD"].ToString();
                                 data.StrIP = rdr["strIP"].ToString();
                                 data.StrMac = rdr["strMac"].ToString();
@@ -312,15 +315,16 @@ namespace LogAnalyzer2
 //            sw2.Start();
 
 
-
                         while (rdr.Read())
                         {
+                            /*
                             Object[] values = new Object[rdr.FieldCount];
                             rdr.GetValues(values);
 
                             MidasUpdate_nIP_T data = new MidasUpdate_nIP_T(values);
+*/
+                            MidasUpdate_nIP_T data = new MidasUpdate_nIP_T();
 
-/*
                             data.Regdate = rdr["regdate"].ToString();
                             data.Regdate = data.Regdate.Replace("/", "-");
                             data.Index_id = rdr["index_id"].ToString();
@@ -345,8 +349,8 @@ namespace LogAnalyzer2
                             data.StrMussID = rdr["strMussID"].ToString();
                             data.ExtLod = rdr["ExtLod"].ToString();
                             data.PLFInfo = rdr["PLFInfo"].ToString();
-                            \data.ULog = rdr["ULog"].ToString();
-*/
+                            data.ULog = rdr["ULog"].ToString();
+
                             DatabasePool.Instance.MidasUpdate_nIP_List.Add(data);
                         }
                         rdr.Close();
