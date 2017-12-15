@@ -297,15 +297,19 @@ namespace LogAnalyzer2
                         continue;
                     }
 
-                    if (funcNumDic.ContainsKey("FloorPlan/SectionPlan") == true)
+//                    if (funcNumDic.ContainsKey("FloorPlan/SectionPlan") == true)
+                    if (funcNumDic.ContainsKey("FloorPlan") == true)
                     {
-                        uint sumNum = funcNumDic["FloorPlan/SectionPlan"];
+//                        uint sumNum = funcNumDic["FloorPlan/SectionPlan"];
+                        uint sumNum = funcNumDic["FloorPlan"];
                         sumNum += nNum;
-                        funcNumDic["FloorPlan/SectionPlan"] = sumNum;
+//                        funcNumDic["FloorPlan/SectionPlan"] = sumNum;
+                        funcNumDic["FloorPlan"] = sumNum;
                     }
                     else
                     {
-                        funcNumDic.Add("FloorPlan/SectionPlan", nNum);
+//                        funcNumDic.Add("FloorPlan/SectionPlan", nNum);
+                        funcNumDic.Add("FloorPlan", nNum);
                     }
                 }
             }
