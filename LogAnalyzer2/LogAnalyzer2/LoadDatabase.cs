@@ -167,7 +167,6 @@ namespace LogAnalyzer2
 //System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
 //ストップウォッチを開始する
 //sw2.Start();
-                        int aaa = 0;
                         while (rdr.Read())
                         {
 //                            if( !(strProgCode == "MDW" && rdr["strVersion"].ToString() != "210"))
@@ -184,9 +183,6 @@ namespace LogAnalyzer2
                                 data.IdxRealConn = rdr["idxRealConn"].ToString();
                                 data.StrCMD = rdr["strCMD"].ToString();
                                 data.StrID = rdr["strID"].ToString();
-                                if (data.StrID.ToString() == "tabuchi" || data.StrID.ToString() == "tabuchi.miyashita")
-                                    aaa = 0;
-
                                 data.StrPWD = rdr["strPWD"].ToString();
                                 data.StrIP = rdr["strIP"].ToString();
                                 data.StrMac = rdr["strMac"].ToString();
@@ -851,29 +847,28 @@ namespace LogAnalyzer2
 
         private int GetProductNum()
         {
-
+            int num = 0;
             string s = _inputParam.strProductName;
-
             switch (s)
             {
                 case "CADRobo(Drawing)":
-                    return 102;
+                    num = 102;
                     break;
                 case "CADRobo(eGen)":
-                    return -1;
+                    num = -1;
                     break;
                 case "midas Drawing":
-                    return 77;
+                    num = 77;
                     break;
                 case "midas eGen":
-                    return -1;
+                    num = -1;
                     break;
                 case "midas iGen":
-                    return -1;
+                    num = -1;
                     break;
             }
 
-            return 0;
+            return num;
         }
 
         private int GetLangageNum()
@@ -888,29 +883,28 @@ namespace LogAnalyzer2
 
         private string GetStrProgCode()
         {
-
+            string str = string.Empty;
             string s = _inputParam.strProductName;
-
             switch (s)
             {
                 case "CADRobo(Drawing)":
-                    return "MDW";
+                    str = "MDW";
                     break;
                 case "CADRobo(eGen)":
-                    return "EGN";
+                    str = "EGN";
                     break;
                 case "midas Drawing":
-                    return "MDR";
+                    str = "MDR";
                     break;
                 case "midas eGen":
-                    return "EGR";
+                    str = "EGR";
                     break;
                 case "midas iGen":
-                    return "IGN";
+                    str = "IGN";
                     break;
             }
 
-            return string.Empty;
+            return str;
         }
 
         private string GetStrLangCode()

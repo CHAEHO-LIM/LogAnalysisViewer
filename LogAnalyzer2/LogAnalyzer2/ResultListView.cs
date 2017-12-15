@@ -186,10 +186,10 @@ namespace LogAnalyzer2
                 string s = DateList.Distinct().Count().ToString();
                 item.SubItems.Add(s);
 
-                if (int.Parse(s) > 3)
-                {
-                    int ii = 0;
-                }
+                //if (int.Parse(s) > 3)
+                //{
+                //    int ii = 0;
+                //}
 
                 List<string> LstStr = new List<string>();
                 LstStr.Add(num.ToString());

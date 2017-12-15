@@ -153,7 +153,7 @@ namespace LogAnalyzer2
                     if (filter.IsShowData() == false)
                         continue;
 
-                    string strVersion = string.Format("{0}{1}{2}", data.NVer1, data.NVer2, data.NVer3);
+                    string strVersion = string.Format("{0}{1}{2}{3}", data.NVer1, data.NVer2, data.NVer3, data.NBuildNum);
                     string strYearMonth = data.Regdate.Substring(0, 7);
 
                     foreach(KeyValuePair<string, uint> pair in funcNumDic)
@@ -250,12 +250,15 @@ namespace LogAnalyzer2
 
         private void ConvertToFunctionTitleFromULog(string strULog, ref Dictionary<string, uint> funcNumDic, ref List<string>ErrData)
         {
+            if (strULog == string.Empty)
+                return;
+
             string[] separator = new string[] { ")" };
             string[] strArray = strULog.Split(separator, StringSplitOptions.None);
 
             foreach (string str in strArray)
             {
-                if (str.Contains("(GML.....-") == true)
+                if (str.Contains("(GML") == true)
                 {
                     string strNum = str.Substring(10, 1);
 
@@ -281,7 +284,7 @@ namespace LogAnalyzer2
                         funcNumDic.Add("MemberList", nNum);
                     }
                 }
-                else if (str.Contains("(GSP.....-") == true)
+                if (str.Contains("(GSP") == true)
                 {
                     string strNum = str.Substring(10, 1);
 

@@ -12,6 +12,7 @@ namespace LogAnalyzer2
         public string Company;
         public string UserIP;
         private InputParam _inputParam;
+        List<string> _CompanyIPList;
 
         public LogFilter(InputParam param)
         {
@@ -24,20 +25,37 @@ namespace LogAnalyzer2
             this.UserID = string.Empty;
             this.Company = string.Empty;
             this.UserIP = string.Empty;
+            _CompanyIPList = new List<string>();
+            _CompanyIPList.Add("124.110.62");//.155");
+            _CompanyIPList.Add("121.157.60");//.6");
+            //_CompanyIPList.Add("121.157.60.7");
+            //_CompanyIPList.Add("121.157.60.30");
         }
 
         public bool IsShowData()
         {
-            if (this.UserIP.Contains(".") && this.UserIP == "124.110.62.155")
-                return false;
-            else if (this.UserIP != string.Empty)
+            if (this.UserIP.Contains(".") == true)//&& this.UserIP == "124.110.62.155")
+            {
+                string[] separator = new string[] { "." };
+                string[] arrayIP = this.UserIP.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                string ip3 = string.Format("{0}.{1}.{2}", arrayIP[0], arrayIP[1], arrayIP[2]);
+
+                if (_CompanyIPList.Contains(ip3) == true)
+                    return false;
+            }
+
+            if (this.UserIP != string.Empty)
             {
                 uint IPAddr = 0;
                 if (uint.TryParse(this.UserIP, out IPAddr) == true)
                 {
                     string strIP = ConvertToIP(IPAddr);//new System.Net.IPAddress(IPAddr).ToString();
 
-                    if (strIP == "124.110.62.155")//"155.62.110.124")
+                    string[] separator = new string[] { "." };
+                    string[] arrayIP = strIP.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                    string ip3 = string.Format("{0}.{1}.{2}", arrayIP[0], arrayIP[1], arrayIP[2]);
+
+                    if (_CompanyIPList.Contains(ip3) == true)//if (strIP == "124.110.62.155")
                         return false;
                 }
             }

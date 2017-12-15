@@ -25,7 +25,7 @@ namespace LogAnalyzer2
         string sDateFrom = "";
         bool buttonUpdateStatus = false;
 
-        bool MouseMoveFlg = false;
+        //bool MouseMoveFlg = false;
 
         public MainForm()
         {
@@ -317,33 +317,33 @@ namespace LogAnalyzer2
             }
         }
 
-        private bool RegistryGet()
-        {
-            // レジストリから取得
-            bool bUpdate = true;
-            string s = "";
-
-            DateTime dtToday = DateTime.Today;
-            //            dtToday.ToString("yyyy-MM-dd");
-
-            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\MIDAS\LogAnalyzer");
-            if (key != null)
-            {
-                string[] valuesNames = key.GetValueNames();
-                if (valuesNames.Contains("GetDate"))
-                {
-                    s = key.GetValue("GetDate").ToString();
-
-                    if (s != dtToday.ToString("yyyy-MM-dd"))
-                        bUpdate = true;
-                    else
-                        bUpdate = false;
-                }
-            }
-
-            return true;
-//            return bUpdate;
-        }
+//         private bool RegistryGet()
+//         {
+//             // レジストリから取得
+//             bool bUpdate = true;
+//             string s = "";
+// 
+//             DateTime dtToday = DateTime.Today;
+//             //            dtToday.ToString("yyyy-MM-dd");
+// 
+//             RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\MIDAS\LogAnalyzer");
+//             if (key != null)
+//             {
+//                 string[] valuesNames = key.GetValueNames();
+//                 if (valuesNames.Contains("GetDate"))
+//                 {
+//                     s = key.GetValue("GetDate").ToString();
+// 
+//                     if (s != dtToday.ToString("yyyy-MM-dd"))
+//                         bUpdate = true;
+//                     else
+//                         bUpdate = false;
+//                 }
+//             }
+// 
+//             return true;
+// //            return bUpdate;
+//         }
 
         private void dataGridViewResult_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
