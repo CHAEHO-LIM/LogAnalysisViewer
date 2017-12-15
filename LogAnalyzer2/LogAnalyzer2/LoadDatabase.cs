@@ -817,7 +817,8 @@ namespace LogAnalyzer2
             {
                 if (DatabasePool.Instance.V_Members_Dic.ContainsKey(member.Id) == true)
                 {
-                    DatabasePool.Instance.V_Members_Dic[member.Id] = member;
+                    if( member.Regist_datetime.ToString().CompareTo(DatabasePool.Instance.V_Members_Dic[member.Id].Regist_datetime.ToString()) > 0 )
+                        DatabasePool.Instance.V_Members_Dic[member.Id] = member;
                 }
                 else
                 {
