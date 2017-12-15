@@ -136,6 +136,8 @@ namespace LogAnalyzer2
                 RowBuf[ColName[3]] = result._version;
 
                 // Number of days used
+                RowBuf[ColName[4]] = GetNumberOfDaysUsed(result._id).ToString();
+/*
                 List<TB_Log_T> LogList = DatabasePool.Instance.TB_Log_List.FindAll(x => x.StrID == result._id);
 
                 List<String> DateList = new List<string>();
@@ -153,7 +155,7 @@ namespace LogAnalyzer2
                 //                var DateList =  LogList.Select(p => p.DEDate).Distinct();     // 重複削除
                 string s = DateList.Distinct().Count().ToString();
                 RowBuf[ColName[4]] = s;
-
+*/
                 uint sum = 0;
                 foreach (string colNam in columnNames)
                 {
@@ -288,16 +290,20 @@ namespace LogAnalyzer2
                 RowBuf[ColName[4]] = result._version;
 
                 // Number of days used
-                List<TB_Log_T> LogList = DatabasePool.Instance.TB_Log_List.FindAll(x => x.StrID == result._id);
+                RowBuf[ColName[5]] = GetNumberOfDaysUsed(result._id).ToString();
+                /*
+                                List<TB_Log_T> LogList = DatabasePool.Instance.TB_Log_List.FindAll(x => x.StrID == result._id);
 
-                List<String> DateList = new List<string>();
-                foreach (TB_Log_T LogT in LogList)
-                {
-                    DateList.Add(LogT.DSDate.Substring(0, 10));
-                }
+                                List<String> DateList = new List<string>();
+                                foreach (TB_Log_T LogT in LogList)
+                                {
+                                    DateList.Add(LogT.DSDate.Substring(0, 10));
+                                }
 
-                string s = DateList.Distinct().Count().ToString();
-                RowBuf[ColName[5]] = s;
+                                string s = DateList.Distinct().Count().ToString();
+                                RowBuf[ColName[5]] = s;
+                */
+
 
                 uint sum = 0;
                 foreach (string colNam in columnNames)
@@ -406,6 +412,31 @@ namespace LogAnalyzer2
                     columnNames.Add(colName);
                 }
             }
+        }
+
+        private int GetNumberOfDaysUsed(string strID)
+        {
+
+            string[] separator = new string[] { "," };
+            string[] strArray = strID.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+
+            int iRet = 0;
+            for (int i = 0; i < strArray.Length; i++)
+            {
+
+                List<TB_Log_T> LogList = DatabasePool.Instance.TB_Log_List.FindAll(x => x.StrID == strArray[i]);
+
+                List<String> DateList = new List<string>();
+                foreach (TB_Log_T LogT in LogList)
+                {
+                    DateList.Add(LogT.DSDate.Substring(0, 10));
+                }
+
+                iRet = iRet + DateList.Distinct().Count();
+
+            }
+
+            return iRet;
         }
     }
 
