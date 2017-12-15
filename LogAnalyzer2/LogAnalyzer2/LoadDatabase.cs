@@ -475,6 +475,12 @@ namespace LogAnalyzer2
                         DatabasePool.Instance.V_Node_Dic.Add(nList.Id, nList);
 
                     }
+                    else
+                    {
+                        //                        if(DateTime.Parse(DatabasePool.Instance.V_Node_Dic[nList.Id].Regist_timestamp)<DateTime.Parse(nList.Regist_timestamp))
+                        if(nList.Regist_timestamp.ToString().CompareTo(DatabasePool.Instance.V_Node_Dic[nList.Id].Regist_timestamp.ToString())>0)
+                        DatabasePool.Instance.V_Node_Dic[nList.Id] = nList;
+                    }
                 }
 
             }
@@ -515,8 +521,12 @@ namespace LogAnalyzer2
                 {
                     if (DatabasePool.Instance.V_Node_Dic.ContainsKey(nList.Id) == false)
                     {
-                        DatabasePool.Instance.V_Node_Dic.Add( nList.Id,nList);
+                        DatabasePool.Instance.V_Node_Dic.Add(nList.Id, nList);
 
+                    }
+                    else
+                    {
+                        nList.Id=nList.Id;
                     }
                 }
  
