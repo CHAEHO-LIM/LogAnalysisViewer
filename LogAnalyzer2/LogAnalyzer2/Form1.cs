@@ -357,11 +357,14 @@ namespace LogAnalyzer2
                 {
                     string sID = "";
                     sID = dataGridViewResult.Rows[dataGV.RowIndex].Cells[2].Value.ToString();
+
                     string sComp = "";
                     sComp = dataGridViewResult.Rows[dataGV.RowIndex].Cells[1].Value.ToString();
 
                     DetailAnalysis DetAnalysis = new DetailAnalysis();
                     DetAnalysis.SetDetailAnalysis(sID, sComp);
+
+
                 }
             }
 
