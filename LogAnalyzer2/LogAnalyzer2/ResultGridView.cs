@@ -36,7 +36,8 @@ namespace LogAnalyzer2
             TargetcolumnNames.Clear();
             List<string> columnNames = new List<string>();
 
-            SetUseLogByVersion(ref columnNames);
+            AddColumnsOnDate(ref columnNames);
+//            SetUseLogByVersion(ref columnNames);
 
             Dictionary<string, ResultTable> resultDic = new Dictionary<string, ResultTable>();
             DBConnection.Instance.GetData(param, ref resultDic);
@@ -98,7 +99,8 @@ namespace LogAnalyzer2
             TargetcolumnNames.Clear();
 
             List<string> columnNames = new List<string>();
-            SetUseLogByCompany(ref columnNames);
+            AddColumnsOnDate(ref columnNames);
+//            SetUseLogByCompany(ref columnNames);
 
             Dictionary<string, ResultTable> resultDic = new Dictionary<string, ResultTable>();
             DBConnection.Instance.GetData(param, ref resultDic);
@@ -137,25 +139,7 @@ namespace LogAnalyzer2
 
                 // Number of days used
                 RowBuf[ColName[4]] = GetNumberOfDaysUsed(result._id).ToString();
-/*
-                List<TB_Log_T> LogList = DatabasePool.Instance.TB_Log_List.FindAll(x => x.StrID == result._id);
 
-                List<String> DateList = new List<string>();
-                foreach (TB_Log_T LogT in LogList)
-                {
-                    try
-                    {
-                        DateList.Add(LogT.DSDate.Substring(0, 10));
-                    }
-                    catch
-                    {
-                    }
-                }
-
-                //                var DateList =  LogList.Select(p => p.DEDate).Distinct();     // 重複削除
-                string s = DateList.Distinct().Count().ToString();
-                RowBuf[ColName[4]] = s;
-*/
                 uint sum = 0;
                 foreach (string colNam in columnNames)
                 {
@@ -185,7 +169,8 @@ namespace LogAnalyzer2
             TargetcolumnNames.Clear();
 
             List<string> columnNames = new List<string>();
-            SetFunctionLogByVersion(ref columnNames);
+            AddColumnsOnDate(ref columnNames);
+//            SetFunctionLogByVersion(ref columnNames);
 
             Dictionary<string, ResultTable> resultDic = new Dictionary<string, ResultTable>();
             DBConnection.Instance.GetData(param, ref resultDic);
@@ -250,7 +235,9 @@ namespace LogAnalyzer2
             TargetcolumnNames.Clear();
 
             List<string> columnNames = new List<string>();
-            SetFunctionLogByCompany(ref columnNames);
+
+            AddColumnsOnDate(ref columnNames);
+//            SetFunctionLogByCompany(ref columnNames);
 
             Dictionary<string, ResultTable> resultDic = new Dictionary<string, ResultTable>();
             DBConnection.Instance.GetData(param, ref resultDic);
@@ -291,19 +278,6 @@ namespace LogAnalyzer2
 
                 // Number of days used
                 RowBuf[ColName[5]] = GetNumberOfDaysUsed(result._id).ToString();
-                /*
-                                List<TB_Log_T> LogList = DatabasePool.Instance.TB_Log_List.FindAll(x => x.StrID == result._id);
-
-                                List<String> DateList = new List<string>();
-                                foreach (TB_Log_T LogT in LogList)
-                                {
-                                    DateList.Add(LogT.DSDate.Substring(0, 10));
-                                }
-
-                                string s = DateList.Distinct().Count().ToString();
-                                RowBuf[ColName[5]] = s;
-                */
-
 
                 uint sum = 0;
                 foreach (string colNam in columnNames)
@@ -326,26 +300,6 @@ namespace LogAnalyzer2
             }
 
             _gridViewResult.DataSource = TableBuf;
-        }
-
-        private void SetUseLogByVersion(ref List<string> columnNames)
-        {
-            AddColumnsOnDate(ref columnNames);
-        }
-
-        private void SetUseLogByCompany(ref List<string> columnNames)
-        {
-            AddColumnsOnDate(ref columnNames);
-        }
-
-        private void SetFunctionLogByVersion(ref List<string> columnNames)
-        {
-            AddColumnsOnDate(ref columnNames);
-        }
-
-        private void SetFunctionLogByCompany(ref List<string> columnNames)
-        {
-            AddColumnsOnDate(ref columnNames);
         }
 
         private void AddColumnsOnDate(ref List<string> columnNames)
