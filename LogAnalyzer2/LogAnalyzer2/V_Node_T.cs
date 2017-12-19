@@ -9,7 +9,6 @@ namespace LogAnalyzer2
 {
     public class V_Node_T
     {
-
         private string _enterprise_code;
         private string _enterprise_name;
         private string _department_code;
@@ -21,66 +20,6 @@ namespace LogAnalyzer2
         private string _ip;
         private string _regist_timestamp;
         private string _use_yn;
-
-/*
-        private object[] V_Node_data;
-
-        public string Enterprise_code
-        {
-            get { return V_Node_data[0].ToString(); }
-            set { V_Node_data[0] = value; }
-        }
-        public string Enterprise_name
-        {
-            get { return V_Node_data[1].ToString(); }
-            set { V_Node_data[1] = value; }
-        }
-        public string Department_code
-        {
-            get { return V_Node_data[2].ToString(); }
-            set { V_Node_data[2] = value; }
-        }
-        public string Department_name
-        {
-            get { return V_Node_data[3].ToString(); }
-            set { V_Node_data[3] = value; }
-        }
-        public string Node_sn
-        {
-            get { return V_Node_data[4].ToString(); }
-            set { V_Node_data[4] = value; }
-        }
-        public string Id
-        {
-            get { return V_Node_data[5].ToString(); }
-            set { V_Node_data[5] = value; }
-        }
-        public string Node_name
-        {
-            get { return V_Node_data[6].ToString(); }
-            set { V_Node_data[6] = value; }
-        }
-        public string Mac
-        {
-            get { return V_Node_data[7].ToString(); }
-            set { V_Node_data[7] = value; }
-        }
-        public string Ip
-        {
-            get { return V_Node_data[8].ToString(); }
-            set { V_Node_data[8] = value; }
-        }
-        public string Regist_timestamp
-        {
-            get { return V_Node_data[9].ToString(); }
-            set { V_Node_data[9] = value; }
-        }
-        public string Use_yn
-        {
-            get { return V_Node_data[10].ToString(); }
-            set { V_Node_data[10] = value; }
-        }
-*/
 
         public string Enterprise_code
         {
@@ -138,14 +77,6 @@ namespace LogAnalyzer2
             set { _use_yn = value; }
         }
 
-/*
-        public V_Node_T(object[] values)
-        {
-            this.V_Node_data = values;
-            //            if (this.V_Node_data[9] == null) V_Node_data[9] = "";
-            //            if (this.V_Node_data[10] == null) V_Node_data[10] = "";
-        }
-*/
         public V_Node_T()
         {
             Initialize();
@@ -153,7 +84,6 @@ namespace LogAnalyzer2
 
         private void Initialize()
         {
-
             this._enterprise_code = string.Empty;
             this._enterprise_name = string.Empty;
             this._department_code = string.Empty;
@@ -165,7 +95,6 @@ namespace LogAnalyzer2
             this._ip = string.Empty;
             this._regist_timestamp = string.Empty;
             this._use_yn = string.Empty;
-
         }
     }
 }
