@@ -110,130 +110,98 @@ namespace LogAnalyzer2
                 this._inputParam.progressBar.Value = 20;
             }
 
+            this._inputParam.strSearchLang = this._inputParam.strCountry;
+            this._inputParam.strSearchProg = GetStrProgCode();
+
             return true;
         }
 
         private bool GetDatabaseTB_Log()
         {
             DatabasePool.Instance.TB_Log_List.Clear();
+            string strLangCode = GetStrLangCode();
             string strProgCode = GetStrProgCode();
 
-            if (!Constants.FLG_UPDATE)
+            string strFilePath = Application.StartupPath + "\\V_TB_LOG_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+            string strRegist_datetime = string.Empty;
+
+            if (File.Exists(strFilePath) == true)
             {
-                string strFilePath = Application.StartupPath + "\\V_TB_LOG_List.xml";
-                double dFromTimestamp = 0;
-
-                if (File.Exists(strFilePath) == true)
-                {
-                    if (LoadV_TB_LOG_Table_XML(strFilePath, ref dFromTimestamp) == false)
-                        return false;
-                }
-
-            }
-            else
-            {
-                string dayFrom = _inputParam.strDateTimePickerFrom;
-                string dayTo = _inputParam.strDateTimePickerTo;
-                string strLangCode = GetStrLangCode();
-
-                string quary = string.Format("SELECT * FROM TB_Log WHERE strLangCode='{0}' AND strProgCode='{1}' AND dSDate>='{2}' AND dSDate<='{3}' ORDER BY dSDate ASC;", strLangCode, strProgCode, dayFrom, dayTo);
-
-                try
-                {
-                    string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
-                        CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
-
-                    using (SqlConnection conn = new SqlConnection(strConn))
-                    {
-//Stopwatchオブジェクトを作成する
-// System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
- //ストップウォッチを開始する
-// sw.Start();
-
-                        conn.Open();
-                        this._inputParam.progressBar.PerformStep();
-                        SqlCommand cmd = new SqlCommand();
-                        cmd.Connection = conn;
-                        cmd.CommandText = quary;
-                        SqlDataReader rdr = cmd.ExecuteReader();
-                        this._inputParam.progressBar.PerformStep();
-
-// sw.Stop();
- //結果を表示する
-// MessageBox.Show(sw.Elapsed.ToString());
- //Console.Write(sw.Elapsed);  
-
-//Stopwatchオブジェクトを作成する
-//System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
-//ストップウォッチを開始する
-//sw2.Start();
-                        while (rdr.Read())
-                        {
-//                            if( !(strProgCode == "MDW" && rdr["strVersion"].ToString() != "210"))
-                            {
-                                TB_Log_T data = new TB_Log_T();
-
-                                data.Idx = rdr["idx"].ToString();
-                                data.DSDate = rdr["dSDate"].ToString();
-                                data.DSDate = data.DSDate.Replace("/", "-");
-                                data.DEDate = rdr["dEDate"].ToString();
-                                data.DEDate = data.DEDate.Replace("/", "-");
-                                data.StrLogCode = rdr["strLogCode"].ToString();
-                                data.StrLogString = rdr["strLogString"].ToString();
-                                data.IdxRealConn = rdr["idxRealConn"].ToString();
-                                data.StrCMD = rdr["strCMD"].ToString();
-                                data.StrID = rdr["strID"].ToString();
-                                data.StrPWD = rdr["strPWD"].ToString();
-                                data.StrIP = rdr["strIP"].ToString();
-                                data.StrMac = rdr["strMac"].ToString();
-                                data.StrPID = rdr["strPID"].ToString();
-                                data.StrLangCode = rdr["strLangCode"].ToString();
-                                data.StrProgCode = rdr["strProgCode"].ToString();
-                                data.StrVersion = rdr["strVersion"].ToString();
-                                data.NUseOpt = rdr["nUseOpt"].ToString();
-                                data.NUseOpt2 = rdr["nUseOpt2"].ToString();
-                                data.NUseOpt3 = rdr["nUseOpt3"].ToString();
-                                data.NUseOpt4 = rdr["nUseOpt4"].ToString();
-                                data.NNationalOpt = rdr["nNationalOpt"].ToString();
-                                data.StrProtectKey = rdr["strProtectKey"].ToString();
-
-
-                                DatabasePool.Instance.TB_Log_List.Add(data);
-                            }
-                        }
-                        rdr.Close();
-
-                        this._inputParam.progressBar.PerformStep();
-
-///////////////////////////////////                        //ストップウォッチを止める
-//                        sw2.Stop();
-                        //結果を表示する
-//                        string s = string.Format("Connect={0},DB Copy={1}", sw.Elapsed.ToString(), sw2.Elapsed.ToString());
-//                        MessageBox.Show(s,"TB_Log");
-//                        Console.Write(sw.Elapsed);                    
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                if (LoadV_TB_LOG_Table_XML(strFilePath, ref strRegist_datetime) == false)
                     return false;
-                }
-
-/*
-                // ローカル開発用に機能ログ保存
-                string strFilePath = Application.StartupPath + "\\V_TB_LOG_List.xml";
-
-                XmlSerializer serializer = new XmlSerializer(typeof(List<TB_Log_T>));
-                FileStream fs = new FileStream(strFilePath, FileMode.Create);
-                serializer.Serialize(fs, DatabasePool.Instance.TB_Log_List);
-                fs.Close();
-*/
             }
+
+            string dayFrom = _inputParam.strDateTimePickerFrom;
+            string dayTo = _inputParam.strDateTimePickerTo;
+
+            string quary = string.Format("SELECT * FROM TB_Log WHERE strLangCode='{0}' AND strProgCode='{1}' AND dSDate>='{2}' ORDER BY dSDate ASC;", strLangCode, strProgCode, strRegist_datetime);
+
+            try
+            {
+                string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
+                    CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
+
+                using (SqlConnection conn = new SqlConnection(strConn))
+                {
+                    conn.Open();
+                    this._inputParam.progressBar.PerformStep();
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = conn;
+                    cmd.CommandText = quary;
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    this._inputParam.progressBar.PerformStep();
+
+                    while (rdr.Read())
+                    {
+                        TB_Log_T data = new TB_Log_T();
+
+                        data.Idx = rdr["idx"].ToString();
+                        data.DSDate = rdr["dSDate"].ToString();
+                        data.DSDate = data.DSDate.Replace("/", "-");
+                        data.DEDate = rdr["dEDate"].ToString();
+                        data.DEDate = data.DEDate.Replace("/", "-");
+                        data.StrLogCode = rdr["strLogCode"].ToString();
+                        data.StrLogString = rdr["strLogString"].ToString();
+                        data.IdxRealConn = rdr["idxRealConn"].ToString();
+                        data.StrCMD = rdr["strCMD"].ToString();
+                        data.StrID = rdr["strID"].ToString();
+                        data.StrPWD = rdr["strPWD"].ToString();
+                        data.StrIP = rdr["strIP"].ToString();
+                        data.StrMac = rdr["strMac"].ToString();
+                        data.StrPID = rdr["strPID"].ToString();
+                        data.StrLangCode = rdr["strLangCode"].ToString();
+                        data.StrProgCode = rdr["strProgCode"].ToString();
+                        data.StrVersion = rdr["strVersion"].ToString();
+                        data.NUseOpt = rdr["nUseOpt"].ToString();
+                        data.NUseOpt2 = rdr["nUseOpt2"].ToString();
+                        data.NUseOpt3 = rdr["nUseOpt3"].ToString();
+                        data.NUseOpt4 = rdr["nUseOpt4"].ToString();
+                        data.NNationalOpt = rdr["nNationalOpt"].ToString();
+                        data.StrProtectKey = rdr["strProtectKey"].ToString();
+
+                        // "Error in the user ID or Password" を除外
+                        if (data.StrLogString != "Error in the user ID or Password")
+                            DatabasePool.Instance.TB_Log_List.Add(data);
+                     }
+                
+                    rdr.Close();
+
+                    this._inputParam.progressBar.PerformStep();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+
+            DatabasePool.Instance.TB_Log_SAVE_List = new List<TB_Log_T>(DatabasePool.Instance.TB_Log_List);
+            DatabasePool.Instance.TB_Log_List = DatabasePool.Instance.TB_Log_List.FindAll(x => x.DSDate.CompareTo(this._inputParam.strDateTimePickerFrom.ToString()) > 0);
 
             return (DatabasePool.Instance.TB_Log_List.Count > 0);
         }
 
-        private bool LoadV_TB_LOG_Table_XML(string strFilePath, ref double dFromTimestamp)
+        private bool LoadV_TB_LOG_Table_XML(string strFilePath, ref string strRegist_datetime)
         {
             try
             {
@@ -249,129 +217,108 @@ namespace LogAnalyzer2
                 return false;
             }
 
+            if (DatabasePool.Instance.TB_Log_List.Count > 0)
+            {
+                string strTime = DatabasePool.Instance.TB_Log_List.Max(s => DateTime.Parse(s.DSDate)).ToString();
+
+                strRegist_datetime = strTime;
+
+            }
+
             return (DatabasePool.Instance.TB_Log_List.Count > 0);
         }
 
         private bool GetDatabaseMidasUpdate_nIP()
         {
             DatabasePool.Instance.MidasUpdate_nIP_List.Clear();
+            string strLangCode = GetStrLangCode();
+            string strProgCode = GetStrProgCode();
 
-            if (!Constants.FLG_UPDATE)
+            string strFilePath = Application.StartupPath + "\\V_MidasUpdate_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+
+            string strRegist_datetime = string.Empty;
+
+            if (File.Exists(strFilePath) == true)
             {
-                string strFilePath = Application.StartupPath + "\\V_MidasUpdate_List.xml";
-                double dFromTimestamp = 0;
-
-                if (File.Exists(strFilePath) == true)
-                {
-                    if (LoadV_MidasUpdate_Table_XML(strFilePath, ref dFromTimestamp) == false)
-                        return false;
-                }
-
-            }
-            else
-            {
-
-                string dayFrom = _inputParam.strDateTimePickerFrom;
-                string dayTo = _inputParam.strDateTimePickerTo;
-                int nProductNum = GetProductNum();
-                int nLangageNum = GetLangageNum();
-
-                if (nProductNum == 0 || nLangageNum == 0)
+                if (LoadV_MidasUpdate_Table_XML(strFilePath, ref strRegist_datetime) == false)
                     return false;
+            }
 
-                string quary = string.Format("SELECT * FROM MidasUpdate_nIP WHERE nProduct='{0}' AND nLang='{1}' AND regdate>='{2}' AND regdate<='{3}' ORDER BY regdate ASC;", nProductNum, nLangageNum, dayFrom, dayTo);
 
-                try
+            string dayFrom = _inputParam.strDateTimePickerFrom;
+            string dayTo = _inputParam.strDateTimePickerTo;
+            int nProductNum = GetProductNum();
+            int nLangageNum = GetLangageNum();
+
+            if (nProductNum == 0 || nLangageNum == 0)
+                return false;
+
+            string quary = string.Format("SELECT * FROM MidasUpdate_nIP WHERE nProduct='{0}' AND nLang='{1}' AND regdate>='{2}' ORDER BY regdate ASC;", nProductNum, nLangageNum, strRegist_datetime);
+
+            try
+            {
+                string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = intra",
+                    CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
+                using (SqlConnection conn = new SqlConnection(strConn))
                 {
-                    string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = intra",
-                        CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
-                    using (SqlConnection conn = new SqlConnection(strConn))
+                    conn.Open();
+                    this._inputParam.progressBar.PerformStep();
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = conn;
+                    cmd.CommandText = quary;
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    this._inputParam.progressBar.PerformStep();
+
+                    while (rdr.Read())
                     {
+                        MidasUpdate_nIP_T data = new MidasUpdate_nIP_T();
 
-                        //Stopwatchオブジェクトを作成する
-//                        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-                        //ストップウォッチを開始する
-//                        sw.Start();
-                        
-                        conn.Open();
-                        this._inputParam.progressBar.PerformStep();
-                        SqlCommand cmd = new SqlCommand();
-                        cmd.Connection = conn;
-                        cmd.CommandText = quary;
-                        SqlDataReader rdr = cmd.ExecuteReader();
-                        this._inputParam.progressBar.PerformStep();
+                        data.Regdate = rdr["regdate"].ToString();
+                        data.Regdate = data.Regdate.Replace("/", "-");
+                        data.Index_id = rdr["index_id"].ToString();
+                        data.ClientV = rdr["ClientV"].ToString();
+                        data.ClientIP = rdr["clientIP"].ToString();
+                        data.ServerIP = rdr["serverIP"].ToString();
+                        data.NProduct = rdr["nProduct"].ToString();
+                        data.NBuildNum = rdr["nBuildNum"].ToString();
+                        data.NLang = rdr["nLang"].ToString();
+                        data.NVer1 = rdr["nVer1"].ToString();
+                        data.NVer2 = rdr["nVer2"].ToString();
+                        data.NVer3 = rdr["nVer3"].ToString();
+                        data.NLic1 = rdr["nLic1"].ToString();
+                        data.NLic2 = rdr["nLic2"].ToString();
+                        data.NLic3 = rdr["nLic3"].ToString();
+                        data.NCRKC = rdr["nCRKC"].ToString();
+                        data.StrLKNum = rdr["strLKNum"].ToString();
+                        data.Chk_client = rdr["chk_client"].ToString();
+                        data.StrName = rdr["strName"].ToString();
+                        data.StrCountry = rdr["strCountry"].ToString();
+                        data.TxtWhois = rdr["txtWhois"].ToString();
+                        data.StrMussID = rdr["strMussID"].ToString();
+                        data.ExtLod = rdr["ExtLod"].ToString();
+                        data.PLFInfo = rdr["PLFInfo"].ToString();
+                        data.ULog = rdr["ULog"].ToString();
 
- ///////////////////////////////////                        //ストップウォッチを止める
- //                       sw.Stop();
+                        DatabasePool.Instance.MidasUpdate_nIP_List.Add(data);
+                    }
+                    rdr.Close();
 
-
-//Stopwatchオブジェクトを作成する
-//            System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
-//ストップウォッチを開始する
-//            sw2.Start();
-
-
-                        while (rdr.Read())
-                        {
-                            /*
-                            Object[] values = new Object[rdr.FieldCount];
-                            rdr.GetValues(values);
-
-                            MidasUpdate_nIP_T data = new MidasUpdate_nIP_T(values);
-*/
-                            MidasUpdate_nIP_T data = new MidasUpdate_nIP_T();
-
-                            data.Regdate = rdr["regdate"].ToString();
-                            data.Regdate = data.Regdate.Replace("/", "-");
-                            data.Index_id = rdr["index_id"].ToString();
-                            data.ClientV = rdr["ClientV"].ToString();
-                            data.ClientIP = rdr["clientIP"].ToString();
-                            data.ServerIP = rdr["serverIP"].ToString();
-                            data.NProduct = rdr["nProduct"].ToString();
-                            data.NBuildNum = rdr["nBuildNum"].ToString();
-                            data.NLang = rdr["nLang"].ToString();
-                            data.NVer1 = rdr["nVer1"].ToString();
-                            data.NVer2 = rdr["nVer2"].ToString();
-                            data.NVer3 = rdr["nVer3"].ToString();
-                            data.NLic1 = rdr["nLic1"].ToString();
-                            data.NLic2 = rdr["nLic2"].ToString();
-                            data.NLic3 = rdr["nLic3"].ToString();
-                            data.NCRKC = rdr["nCRKC"].ToString();
-                            data.StrLKNum = rdr["strLKNum"].ToString();
-                            data.Chk_client = rdr["chk_client"].ToString();
-                            data.StrName = rdr["strName"].ToString();
-                            data.StrCountry = rdr["strCountry"].ToString();
-                            data.TxtWhois = rdr["txtWhois"].ToString();
-                            data.StrMussID = rdr["strMussID"].ToString();
-                            data.ExtLod = rdr["ExtLod"].ToString();
-                            data.PLFInfo = rdr["PLFInfo"].ToString();
-                            data.ULog = rdr["ULog"].ToString();
-
-                            DatabasePool.Instance.MidasUpdate_nIP_List.Add(data);
-                        }
-                        rdr.Close();
-
-                        this._inputParam.progressBar.PerformStep();
-///////////////////////////////////                        //ストップウォッチを止める
-/*
-                        sw2.Stop();
-       //結果を表示する
-       string s = string.Format("Connect={0},DB Copy={1}", sw.Elapsed.ToString(), sw2.Elapsed.ToString());
-//       MessageBox.Show(s, "MidasUpdate_nIP");
-//       Console.Write(sw.Elapsed);    
-*/                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    return false;
+                    this._inputParam.progressBar.PerformStep();
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+
+            DatabasePool.Instance.MidasUpdate_nIP_SAVE_List = new List<MidasUpdate_nIP_T>(DatabasePool.Instance.MidasUpdate_nIP_List);
+            DatabasePool.Instance.MidasUpdate_nIP_List = DatabasePool.Instance.MidasUpdate_nIP_List.FindAll(x => x.Regdate.CompareTo(this._inputParam.strDateTimePickerFrom.ToString()) > 0);
 
             return (DatabasePool.Instance.MidasUpdate_nIP_List.Count >= 0);
         }
 
-        private bool LoadV_MidasUpdate_Table_XML(string strFilePath, ref double dFromTimestamp)
+        private bool LoadV_MidasUpdate_Table_XML(string strFilePath, ref string strRegist_datetime)
         {
             try
             {
@@ -387,7 +334,22 @@ namespace LogAnalyzer2
                 return false;
             }
 
-            return (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0);
+            if (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0)
+            {
+//                string strTime = DatabasePool.Instance.MidasUpdate_nIP_List.Max(s =>s.Regdate);
+                string strTime = DatabasePool.Instance.MidasUpdate_nIP_List.Max(s => DateTime.Parse(s.Regdate)).ToString();
+
+                strRegist_datetime = strTime;
+
+            }
+            else
+            {
+                strRegist_datetime = this._inputParam.strDateTimePickerFrom;
+            }
+
+//            return (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0);
+
+            return true;
         }
 
         private bool GetDatabaseV_Node_Table()
@@ -406,79 +368,83 @@ namespace LogAnalyzer2
             {
                 DateTime fromDT = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
                 dFromTimestamp = ConvertToUnixTimestamp(fromDT);
-                
+
             }
 
-            DateTime dt =ConvertFromUnixTimestamp(dFromTimestamp);
+            DateTime dt = ConvertFromUnixTimestamp(dFromTimestamp);
             DateTime dtToday = DateTime.Today;
-            if (Constants.FLG_UPDATE && dt.ToString("yyyy-MM-dd") != dtToday.ToString("yyyy-MM-dd"))
+
+            Constants.bFirstConnect = true;
+
+            List<V_Node_T> nodeList = new List<V_Node_T>();
+            double dNowTimestamp = ConvertToUnixTimestamp(DateTime.Now);
+
+            string quary = string.Format("SELECT * FROM V_Node WHERE regist_timestamp > '{0}' AND regist_timestamp <= '{1}' ORDER BY regist_timestamp ASC", dFromTimestamp, dNowTimestamp);
+
+            try
             {
-                Constants.bFirstConnect = true;
-
-                List<V_Node_T> nodeList = new List<V_Node_T>();
-                double dNowTimestamp = ConvertToUnixTimestamp(DateTime.Now);
-
-                string quary = string.Format("SELECT * FROM V_Node WHERE regist_timestamp > '{0}' AND regist_timestamp <= '{1}' ORDER BY regist_timestamp ASC", dFromTimestamp, dNowTimestamp);
-
-                try
+                string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
+                    CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
+                using (SqlConnection conn = new SqlConnection(strConn))
                 {
-                    string strConn = string.Format("server = {0}; User ID = {1}; Password = {2}; database = midasit.co.kr.mms2",
-                        CertificationManager.Instance.ServerIP, CertificationManager.Instance.Id, CertificationManager.Instance.Pw);
-                    using (SqlConnection conn = new SqlConnection(strConn))
+                    conn.Open();
+                    this._inputParam.progressBar.PerformStep();
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = conn;
+                    cmd.CommandText = quary;
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    this._inputParam.progressBar.PerformStep();
+
+                    while (rdr.Read())
                     {
-                        conn.Open();
-                        this._inputParam.progressBar.PerformStep();
-                        SqlCommand cmd = new SqlCommand();
-                        cmd.Connection = conn;
-                        cmd.CommandText = quary;
-                        SqlDataReader rdr = cmd.ExecuteReader();
-                        this._inputParam.progressBar.PerformStep();
+                        V_Node_T data = new V_Node_T();
 
-                        while (rdr.Read())
+                        data.Id = rdr["id"].ToString();
+
+                        if (DatabasePool.Instance.V_Node_Dic.ContainsKey(data.Id) == false)
                         {
-                            V_Node_T data = new V_Node_T();
-
                             data.Enterprise_code = rdr["enterprise_code"].ToString();
                             data.Enterprise_name = rdr["enterprise_name"].ToString();
                             data.Department_code = rdr["department_code"].ToString();
                             data.Department_name = rdr["department_name"].ToString();
                             data.Node_sn = rdr["node_sn"].ToString();
-                            data.Id = rdr["id"].ToString();
                             data.Node_name = rdr["node_name"].ToString();
                             data.Mac = rdr["mac"].ToString();
                             data.Ip = rdr["ip"].ToString();
                             data.Regist_timestamp = rdr["regist_timestamp"].ToString();
                             data.Use_yn = rdr["use_yn"].ToString();
 
-                            nodeList.Add(data);
+                            DatabasePool.Instance.V_Node_Dic.Add(data.Id, data);
+
                         }
-                        rdr.Close();
+                        else
+                        {
+                            if (data.Regist_timestamp.ToString().CompareTo(DatabasePool.Instance.V_Node_Dic[data.Id].Regist_timestamp.ToString()) > 0)
+                            {
+                                data.Enterprise_code = rdr["enterprise_code"].ToString();
+                                data.Enterprise_name = rdr["enterprise_name"].ToString();
+                                data.Department_code = rdr["department_code"].ToString();
+                                data.Department_name = rdr["department_name"].ToString();
+                                data.Node_sn = rdr["node_sn"].ToString();
+                                data.Node_name = rdr["node_name"].ToString();
+                                data.Mac = rdr["mac"].ToString();
+                                data.Ip = rdr["ip"].ToString();
+                                data.Regist_timestamp = rdr["regist_timestamp"].ToString();
+                                data.Use_yn = rdr["use_yn"].ToString();
 
-                        this._inputParam.progressBar.PerformStep();
+                                DatabasePool.Instance.V_Node_Dic[data.Id] = data;
+                            }
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    return false;
-                }
-  
-                foreach (V_Node_T nList in nodeList)
-                {
-                    if (DatabasePool.Instance.V_Node_Dic.ContainsKey(nList.Id) == false)
-                    {
-                        //                        nodeList = nodeList.DistinctBy(x => x.Id);
-                        DatabasePool.Instance.V_Node_Dic.Add(nList.Id, nList);
+                    rdr.Close();
 
-                    }
-                    else
-                    {
-                        //                        if(DateTime.Parse(DatabasePool.Instance.V_Node_Dic[nList.Id].Regist_timestamp)<DateTime.Parse(nList.Regist_timestamp))
-                        if(nList.Regist_timestamp.ToString().CompareTo(DatabasePool.Instance.V_Node_Dic[nList.Id].Regist_timestamp.ToString())>0)
-                        DatabasePool.Instance.V_Node_Dic[nList.Id] = nList;
-                    }
+                    this._inputParam.progressBar.PerformStep();
                 }
-
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
             }
 
             return (DatabasePool.Instance.V_Node_Dic.Count > 0);
@@ -492,7 +458,6 @@ namespace LogAnalyzer2
 
             try
             {
-
                 XmlSerializer deSerializer = new XmlSerializer(typeof(List<V_Node_T>));
                 StreamReader reader = new StreamReader(strFilePath);
                 nodeList = (List<V_Node_T>)deSerializer.Deserialize(reader);
@@ -507,7 +472,8 @@ namespace LogAnalyzer2
 
             if (nodeList.Count > 0)
             {
-                string strTime = nodeList[nodeList.Count - 1].Regist_timestamp;
+//                string strTime = nodeList[nodeList.Count - 1].Regist_timestamp;
+                string strTime = nodeList.Max(s => s.Regist_timestamp);
 
                 double dVal = 0;
                 if (double.TryParse(strTime, out dVal) == true)
@@ -553,16 +519,14 @@ namespace LogAnalyzer2
             }
 
             DateTime dtToday = DateTime.Today;//.ToString(),"yyyy-MM-dd hh:mm:ss tt",null);
-            if (Constants.FLG_UPDATE && dtToday.ToString("yyyy-MM-dd") != DateTime.Parse(strRegist_datetime).ToString("yyyy-MM-dd") )
-            {
-                Constants.bFirstConnect = true;
+            Constants.bFirstConnect = true;
 
-                if (GetDatabaseV_Members_AddedTable(strRegist_datetime) == false)
-                    return false;
+            if (GetDatabaseV_Members_AddedTable(strRegist_datetime) == false)
+                return false;
 
-                if (GetDatabaseV_Members_ModifiedTable(strRegist_datetime) == false)
-                    return false;
-            }
+            if (GetDatabaseV_Members_ModifiedTable(strRegist_datetime) == false)
+                return false;
+        
             return true;
         }
 
@@ -597,11 +561,9 @@ namespace LogAnalyzer2
                 {
                     System.Diagnostics.Debug.Assert(false, "IDは複数存在出来ません。");
                 }
-
-                lastTime = member.Regist_datetime;
             }
-
-            strRegist_datetime = lastTime;
+            
+            strRegist_datetime = memberList.Max(s => DateTime.Parse(s.Regist_datetime)).ToString();
 
             return (DatabasePool.Instance.V_Members_Dic.Count > 0);
         }
@@ -614,7 +576,7 @@ namespace LogAnalyzer2
             List<V_Members_T> memberList = new List<V_Members_T>();
             string strNow = DateTime.Now.ToString(strDatatimeDbPattern, culture);
 
-            //regist_datetimeの詩分秒まで計算しなきゃならないが後でいます。
+            //regist_datetimeの時分秒まで計算しなきゃならないが後でいます。
             string quary = string.Format("SELECT * FROM V_Members WHERE regist_datetime >= '{0}' AND regist_datetime < '{1}' ORDER BY regist_datetime ASC", strRegist_datetime, strNow);
 
             try
@@ -636,58 +598,76 @@ namespace LogAnalyzer2
                         V_Members_T data = new V_Members_T();
 
                         data.Id = rdr["id"].ToString();
-                        data.First_name = rdr["first_name"].ToString();
-                        data.Last_name = rdr["last_name"].ToString();
-                        data.Eng_first_name = rdr["eng_first_name"].ToString();
-                        data.Eng_last_name = rdr["eng_last_name"].ToString();
-                        data.Email = rdr["email"].ToString();
-                        data.Mobile = rdr["mobile"].ToString();
-                        data.Fax = rdr["fax"].ToString();
-                        data.Telephone = rdr["telephone"].ToString();
-                        data.Enterprise_name = rdr["enterprise_name"].ToString();
-                        data.Department_name = rdr["department_name"].ToString();
-                        data.Duty = rdr["duty"].ToString();
-                        data.Address = rdr["address"].ToString();
-                        data.Area_code = rdr["area_code"].ToString();
 
-                        string pattern = "yyyy-MM-dd tt h:m:s";
-                        string pattern2 = "yyyy/MM/dd H:m:s";
-
-                        DateTime parsedDate;
-                        string strTimme = rdr["regist_datetime"].ToString();
-                        if (DateTime.TryParseExact(strTimme, pattern, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
-                            data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
-                        else
+                        if (DatabasePool.Instance.V_Members_Dic.ContainsKey(data.Id) == false)
                         {
-                            if (strTimme != string.Empty)
+                            bool AddDicFlg = true;
+                            string pattern = "yyyy-MM-dd tt h:m:s";
+                            string pattern2 = "yyyy/MM/dd H:m:s";
+
+                            DateTime parsedDate;
+                            string strTimme = rdr["regist_datetime"].ToString();
+                            if (DateTime.TryParseExact(strTimme, pattern, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                            else
                             {
-                                if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
-                                    data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
-                                else
+                                if (strTimme != string.Empty)
                                 {
-                                    Debug.Assert(false, "Parsing出来ない文字があります。");
+                                    if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                        data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                                    else
+                                    {
+                                        Debug.Assert(false, "Parsing出来ない文字があります。");
+                                        AddDicFlg = false;
+                                    }
                                 }
+                                else
+                                    AddDicFlg = false;
+                            }
+
+                            strTimme = rdr["update_datetime"].ToString();
+                            if (DateTime.TryParseExact(strTimme, pattern, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                            else
+                            {
+                                if (strTimme != string.Empty)
+                                {
+                                    if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                        data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                                    else
+                                    {
+                                        Debug.Assert(false, "Parsing出来ない文字があります。");
+                                        AddDicFlg = false;
+                                    }
+                                }
+                                else
+                                    AddDicFlg = false;
+                            }
+                            if (AddDicFlg)
+                            {
+                                data.First_name = rdr["first_name"].ToString();
+                                data.Last_name = rdr["last_name"].ToString();
+                                data.Eng_first_name = rdr["eng_first_name"].ToString();
+                                data.Eng_last_name = rdr["eng_last_name"].ToString();
+                                data.Email = rdr["email"].ToString();
+                                data.Mobile = rdr["mobile"].ToString();
+                                data.Fax = rdr["fax"].ToString();
+                                data.Telephone = rdr["telephone"].ToString();
+                                data.Enterprise_name = rdr["enterprise_name"].ToString();
+                                data.Department_name = rdr["department_name"].ToString();
+                                data.Duty = rdr["duty"].ToString();
+                                data.Address = rdr["address"].ToString();
+                                data.Area_code = rdr["area_code"].ToString();
+
+                                DatabasePool.Instance.V_Members_Dic.Add(data.Id, data);
                             }
                         }
-
-                        strTimme = rdr["update_datetime"].ToString();
-                        if (DateTime.TryParseExact(strTimme, pattern, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
-                            data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
                         else
                         {
-                            if (strTimme != string.Empty)
-                            {
-                                if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
-                                    data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
-                                else
-                                {
-                                    Debug.Assert(false, "Parsing出来ない文字があります。");
-                                }
-                            }
+                            //System.Diagnostics.Debug.Assert(false, "IDは複数存在出来ません。");
                         }
-
-                        memberList.Add(data);
                     }
+
                     rdr.Close();
 
                     this._inputParam.progressBar.PerformStep();
@@ -697,18 +677,6 @@ namespace LogAnalyzer2
             {
                 MessageBox.Show(ex.Message);
                 return false;
-            }
-
-            foreach (V_Members_T member in memberList)
-            {
-                if (DatabasePool.Instance.V_Members_Dic.ContainsKey(member.Id) == false)
-                {
-                    DatabasePool.Instance.V_Members_Dic.Add(member.Id, member);
-                }
-                else
-                {
-                    //System.Diagnostics.Debug.Assert(false, "IDは複数存在出来ません。");
-                }
             }
 
             return (DatabasePool.Instance.V_Members_Dic.Count > 0);
@@ -722,7 +690,7 @@ namespace LogAnalyzer2
             List<V_Members_T> memberList = new List<V_Members_T>();
             string strNow = DateTime.Now.ToString(strDatatimeDbPattern, culture);
 
-            //regist_datetimeの詩分秒まで計算しなきゃならないが後でいます。
+            //regist_datetimeの時分秒まで計算しなきゃならないが後でいます。
             string quary = string.Format("SELECT * FROM V_Members WHERE update_datetime > '{0}' AND update_datetime < '{1}' ORDER BY regist_datetime ASC", strRegist_datetime, strNow);
 
             try
@@ -744,59 +712,80 @@ namespace LogAnalyzer2
                         V_Members_T data = new V_Members_T();
 
                         data.Id = rdr["id"].ToString();
-                        data.First_name = rdr["first_name"].ToString();
-                        data.Last_name = rdr["last_name"].ToString();
-                        data.Eng_first_name = rdr["eng_first_name"].ToString();
-                        data.Eng_last_name = rdr["eng_last_name"].ToString();
-                        data.Email = rdr["email"].ToString();
-                        data.Mobile = rdr["mobile"].ToString();
-                        data.Fax = rdr["fax"].ToString();
-                        data.Telephone = rdr["telephone"].ToString();
-                        data.Enterprise_name = rdr["enterprise_name"].ToString();
-                        data.Department_name = rdr["department_name"].ToString();
-                        data.Duty = rdr["duty"].ToString();
-                        data.Address = rdr["address"].ToString();
-                        data.Area_code = rdr["area_code"].ToString();
 
-
-                        string pattern = "yyyy-MM-dd tt h:m:s";
-                        string pattern2 = "yyyy/MM/dd H:m:s";
-
-                        DateTime parsedDate;
-                        string strTimme = rdr["regist_datetime"].ToString();
-
-                        if (DateTime.TryParseExact(strTimme, pattern, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
-                            data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
-                        else
+                        if (DatabasePool.Instance.V_Members_Dic.ContainsKey(data.Id) == true)
                         {
-                            if (strTimme != string.Empty)
+                            bool AddDicFlg = true;
+
+                            string pattern = "yyyy-MM-dd tt h:m:s";
+                            string pattern2 = "yyyy/MM/dd H:m:s";
+
+                            DateTime parsedDate;
+                            string strTimme = rdr["regist_datetime"].ToString();
+
+                            if (DateTime.TryParseExact(strTimme, pattern, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                            else
                             {
-                                if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
-                                    data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
-                                else
+                                if (strTimme != string.Empty)
                                 {
-                                    Debug.Assert(false, "Parsing出来ない文字があります。");
+                                    if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                        data.Regist_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                                    else
+                                    {
+                                        Debug.Assert(false, "Parsing出来ない文字があります。");
+                                        AddDicFlg = false;
+                                    }
+                                }
+                                else
+                                    AddDicFlg = false;
+                            }
+
+                            strTimme = rdr["update_datetime"].ToString();
+                            if (DateTime.TryParseExact(strTimme, pattern, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                            else
+                            {
+                                if (strTimme != string.Empty)
+                                {
+                                    if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
+                                        data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
+                                    else
+                                    {
+                                        Debug.Assert(false, "Parsing出来ない文字があります。");
+                                        AddDicFlg = false;
+                                    }
+                                }
+                                else
+                                    AddDicFlg = false;
+                            }
+
+                            if (AddDicFlg)
+                            {
+                                if (data.Update_datetime.ToString().CompareTo(DatabasePool.Instance.V_Members_Dic[data.Id].Update_datetime.ToString()) > 0)
+                                {
+                                    data.First_name = rdr["first_name"].ToString();
+                                    data.Last_name = rdr["last_name"].ToString();
+                                    data.Eng_first_name = rdr["eng_first_name"].ToString();
+                                    data.Eng_last_name = rdr["eng_last_name"].ToString();
+                                    data.Email = rdr["email"].ToString();
+                                    data.Mobile = rdr["mobile"].ToString();
+                                    data.Fax = rdr["fax"].ToString();
+                                    data.Telephone = rdr["telephone"].ToString();
+                                    data.Enterprise_name = rdr["enterprise_name"].ToString();
+                                    data.Department_name = rdr["department_name"].ToString();
+                                    data.Duty = rdr["duty"].ToString();
+                                    data.Address = rdr["address"].ToString();
+                                    data.Area_code = rdr["area_code"].ToString();
+
+                                    DatabasePool.Instance.V_Members_Dic[data.Id] = data;
                                 }
                             }
                         }
-
-                        strTimme = rdr["update_datetime"].ToString();
-                        if (DateTime.TryParseExact(strTimme, pattern, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
-                            data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
                         else
                         {
-                            if (strTimme != string.Empty)
-                            {
-                                if (DateTime.TryParseExact(strTimme, pattern2, null, System.Globalization.DateTimeStyles.None, out parsedDate) == true)
-                                    data.Update_datetime = parsedDate.ToString(strDatatimeDbPattern, culture);
-                                else
-                                {
-                                    Debug.Assert(false, "Parsing出来ない文字があります。");
-                                }
-                            }
+                            System.Diagnostics.Debug.Assert(false, "IDは複数存在出来ません。");
                         }
-
-                        memberList.Add(data);
                     }
                     rdr.Close();
 
@@ -809,41 +798,8 @@ namespace LogAnalyzer2
                 return false;
             }
 
-            foreach (V_Members_T member in memberList)
-            {
-                if (DatabasePool.Instance.V_Members_Dic.ContainsKey(member.Id) == true)
-                {
-                    if( member.Regist_datetime.ToString().CompareTo(DatabasePool.Instance.V_Members_Dic[member.Id].Regist_datetime.ToString()) > 0 )
-                        DatabasePool.Instance.V_Members_Dic[member.Id] = member;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.Assert(false, "IDは複数存在出来ません。");
-                }
-            }
-
             return true;
         }
-
-        private bool LoadV_ModuleID_Log_Table_XML(string strFilePath, ref List<ModuleID_Log_T> moduleid_List)
-        {
-            try
-            {
-                XmlSerializer deSerializer = new XmlSerializer(typeof(List<ModuleID_Log_T>));
-                StreamReader reader = new StreamReader(strFilePath);
-                moduleid_List = (List<ModuleID_Log_T>)deSerializer.Deserialize(reader);
-                this._inputParam.progressBar.PerformStep();
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return false;
-            }
-
-            return (moduleid_List.Count > 0);
-        }
-//* 20171024 */
 
         private int GetProductNum()
         {
@@ -907,12 +863,22 @@ namespace LogAnalyzer2
             return str;
         }
 
+        public string GetProgCode()
+        {
+            return GetStrProgCode();
+        }
+
         private string GetStrLangCode()
         {
             if (_inputParam.strCountry == "JP")
                 return "JP";
 
             return string.Empty;
+        }
+
+        public string GetLangCode()
+        {
+            return GetStrLangCode();
         }
 
         public static DateTime ConvertFromUnixTimestamp(double timestamp)
@@ -926,6 +892,12 @@ namespace LogAnalyzer2
             DateTime origin = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             TimeSpan diff = date.ToUniversalTime() - origin;
             return Math.Floor(diff.TotalSeconds);
+        }
+
+        private bool Read_TB_Log_XMLData(string strPGCode)
+        {
+
+            return true;
         }
 
     }
