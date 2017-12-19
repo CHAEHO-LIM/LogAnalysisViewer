@@ -32,6 +32,10 @@ namespace LogAnalyzer2
         public string strFilterUserID;
         public eLogType logType;
         public eResultType resultType;
+
+        public string strSearchLang;
+        public string strSearchProg;
+
         public System.Windows.Forms.ProgressBar progressBar;
 
         public InputParam()
@@ -49,6 +53,10 @@ namespace LogAnalyzer2
             strFilterUserID = string.Empty;
             logType = eLogType.kLogUseType;
             resultType = eResultType.kByVersionType;
+
+            strSearchLang = string.Empty;
+            strSearchProg = string.Empty;
+
             progressBar = null;
         }
     }
@@ -300,18 +308,14 @@ namespace LogAnalyzer2
                         continue;
                     }
 
-//                    if (funcNumDic.ContainsKey("FloorPlan/SectionPlan") == true)
                     if (funcNumDic.ContainsKey("FloorPlan") == true)
                     {
-//                        uint sumNum = funcNumDic["FloorPlan/SectionPlan"];
                         uint sumNum = funcNumDic["FloorPlan"];
                         sumNum += nNum;
-//                        funcNumDic["FloorPlan/SectionPlan"] = sumNum;
                         funcNumDic["FloorPlan"] = sumNum;
                     }
                     else
                     {
-//                        funcNumDic.Add("FloorPlan/SectionPlan", nNum);
                         funcNumDic.Add("FloorPlan", nNum);
                     }
                 }
@@ -359,8 +363,6 @@ namespace LogAnalyzer2
 
             if (param.strProductName != "CADRobo(Drawing)")
             {
-                // 20171026
-
                 //検索したUserIDでCompanyNameをV_Nodeで探す。
                 foreach ( string UID in userIds )
                 {
@@ -390,7 +392,6 @@ namespace LogAnalyzer2
                     {
                         System.Diagnostics.Debug.Assert(false, "UserIDに対するCompany Nameがないです。確認必要！");
                         ErrData.Add(id);
-//                        companyNames.Add("No Company");
                         this._nAssertCount4++;
                     }
                 }
@@ -416,73 +417,87 @@ namespace LogAnalyzer2
 
         public void SaveDatabase()
         {
-            //XML Save
-            /*if (dFromTimestamp == 0)
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(List<V_Node_T>));
-                FileStream fs = new FileStream(strFilePath, FileMode.Create);
-                serializer.Serialize(fs, nodeList);
-                fs.Close();
-            }
-            else
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(strFilePath);
-
-                foreach (V_Node_T noddT in nodeList)
-                {
-                    XmlNode xmlRecordNo = xmlDoc.CreateNode(XmlNodeType.Element, "V_Node_T", null);
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Enterprise_code", noddT.Enterprise_code));
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Enterprise_name", noddT.Enterprise_name));
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Department_code", noddT.Department_code));
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Department_name", noddT.Department_name));
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Node_sn", noddT.Node_sn));
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Id", noddT.Id));
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Node_name", noddT.Node_name));
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Regist_timestamp", noddT.Regist_timestamp));
-                    xmlRecordNo.AppendChild(xmlDoc.CreateNode(XmlNodeType.Element, "Use_yn", noddT.Use_yn));
-
-                    xmlDoc.DocumentElement.AppendChild(xmlRecordNo);
-                }
-
-                xmlDoc.Save(strFilePath);
-            }*/
-
             this._inputParam.progressBar.Style = ProgressBarStyle.Continuous;
             this._inputParam.progressBar.Minimum = 0;
             this._inputParam.progressBar.Maximum = 6;
             this._inputParam.progressBar.Step = 1;
             this._inputParam.progressBar.PerformStep();
 
-            //V_Node Table 保存
-            string strFilePath1 = Application.StartupPath + "\\V_Node_List.xml";
-            if (File.Exists(strFilePath1) == true)
-                File.Delete(strFilePath1);
+            //V_Node Table Save
+            string strFilePath = Application.StartupPath + "\\V_Node_List.xml";
+            if (File.Exists(strFilePath) == true)
+                File.Delete(strFilePath);
 
             this._inputParam.progressBar.PerformStep();
 
             List<V_Node_T> nodeList = DatabasePool.Instance.V_Node_Dic.Values.ToList();
-            XmlSerializer serializer1 = new XmlSerializer(typeof(List<V_Node_T>));
-            FileStream fs1 = new FileStream(strFilePath1, FileMode.Create);
-            serializer1.Serialize(fs1, nodeList);
+            XmlSerializer serializer = new XmlSerializer(typeof(List<V_Node_T>));
+            FileStream fs = new FileStream(strFilePath, FileMode.Create);
+            serializer.Serialize(fs, nodeList);
             this._inputParam.progressBar.PerformStep();
-            fs1.Close();
+            fs.Close();
+            serializer = null;
             this._inputParam.progressBar.PerformStep();
 
-            //V_Members Table 保存
-            string strFilePath2 = Application.StartupPath + "\\V_Members_List.xml";
-            if (File.Exists(strFilePath2) == true)
-                File.Delete(strFilePath2);
+            //V_Members Table Save
+            strFilePath = Application.StartupPath + "\\V_Members_List.xml";
+            if (File.Exists(strFilePath) == true)
+                File.Delete(strFilePath);
 
             this._inputParam.progressBar.PerformStep();
 
             List<V_Members_T> memberList = DatabasePool.Instance.V_Members_Dic.Values.ToList();
-            XmlSerializer serializer2 = new XmlSerializer(typeof(List<V_Members_T>));
-            FileStream fs2 = new FileStream(strFilePath2, FileMode.Create);
-            serializer2.Serialize(fs2, memberList);
+            serializer = new XmlSerializer(typeof(List<V_Members_T>));
+            fs = new FileStream(strFilePath, FileMode.Create);
+            serializer.Serialize(fs, memberList);
             this._inputParam.progressBar.PerformStep();
-            fs2.Close();
+            fs.Close();
+            serializer = null;
             this._inputParam.progressBar.PerformStep();
+
+            SaveDatabase_LangProg(this._inputParam);
+        }
+
+        public void SaveDatabase_LangProg(InputParam param)
+        {
+            string strLangCode = param.strSearchLang;
+            string strProgCode = param.strSearchProg;
+
+            string strFile = "";
+            string strFilePath = "";
+            XmlSerializer serializer;
+            FileStream fs;
+
+            if (DatabasePool.Instance.TB_Log_SAVE_List.Count > 0)
+            {
+
+                strFile = "\\V_TB_LOG_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+                // TB_Log Save
+                strFilePath = Application.StartupPath + strFile;
+                if (File.Exists(strFilePath) == true)
+                    File.Delete(strFilePath);
+
+                serializer = new XmlSerializer(typeof(List<TB_Log_T>));
+                fs = new FileStream(strFilePath, FileMode.Create);
+                serializer.Serialize(fs, DatabasePool.Instance.TB_Log_SAVE_List);
+                fs.Close();
+                serializer = null;
+            }
+
+            if (DatabasePool.Instance.MidasUpdate_nIP_SAVE_List.Count > 0)
+            {
+                strFile = "\\V_MidasUpdate_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+                // MidasUpdate_nIP_T Save
+                strFilePath = Application.StartupPath + strFile;
+                if (File.Exists(strFilePath) == true)
+                    File.Delete(strFilePath);
+
+                serializer = new XmlSerializer(typeof(List<MidasUpdate_nIP_T>));
+                fs = new FileStream(strFilePath, FileMode.Create);
+                serializer.Serialize(fs, DatabasePool.Instance.MidasUpdate_nIP_SAVE_List);
+                fs.Close();
+                serializer = null;
+            }
         }
 
         private string CovertLogCode(string strLog)
