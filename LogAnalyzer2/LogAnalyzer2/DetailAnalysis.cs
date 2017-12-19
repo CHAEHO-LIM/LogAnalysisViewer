@@ -15,7 +15,6 @@ namespace LogAnalyzer2
             DetailAnalysisForm dlg = new DetailAnalysisForm();
             
             System.Windows.Forms.TextBox DetailText = dlg.GetTextBox();
-//            System.Windows.Forms.ListView DetailView = dlg.GetView();
             System.Windows.Forms.DataGridView DetailView = dlg.GetGridView();
 
 
@@ -62,30 +61,6 @@ namespace LogAnalyzer2
                 DetailText.Text = sComp;
                 int i = 0;
 
-                /*
-                            DataTable TableBuf = new DataTable();
- 
-                            TableBuf.Columns.Add("No");
-                            TableBuf.Columns.Add("PID");
-                            TableBuf.Columns.Add("ConnDate");
-
-                            TableBuf.Columns.Add("End Date");
-                            TableBuf.Columns.Add("CMD");
-                            TableBuf.Columns.Add("Muss Ent");
-                            TableBuf.Columns.Add("Muss Post");
-                            TableBuf.Columns.Add("Muss Email");
-                            TableBuf.Columns.Add("ID");
-                            TableBuf.Columns.Add("IP");
-                            TableBuf.Columns.Add("MAC");
-                            TableBuf.Columns.Add("Lang");
-                            TableBuf.Columns.Add("PG");
-                            TableBuf.Columns.Add("Ver.");
-                            TableBuf.Columns.Add("Option");
-                            TableBuf.Columns.Add("National");
-                            TableBuf.Columns.Add("PKID");
-                            TableBuf.Columns.Add("Log Code");
-                            TableBuf.Columns.Add("Description");
-                */
                 string sOpt = "";
                 i = 0;
                 foreach (TB_Log_T LogTmp in LogList)
@@ -132,7 +107,7 @@ namespace LogAnalyzer2
                 DetailView.DataSource = TableBuf;
             }
 
-            dlg.ShowDialog();// == System.Windows.Forms.DialogResult.OK)
+            dlg.ShowDialog();
 
             return true;
         }    
