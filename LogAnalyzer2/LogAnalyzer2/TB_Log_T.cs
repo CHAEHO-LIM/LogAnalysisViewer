@@ -8,7 +8,6 @@ namespace LogAnalyzer2
 {
     public class TB_Log_T
     {
-
         private string _idx;
         private string _dSDate;
         private string _dEDate;
@@ -30,116 +29,6 @@ namespace LogAnalyzer2
         private string _nUseOpt4;
         private string _nNationalOpt;
         private string _strProtectKey;
-
-/*
-        private object[] TB_Log_Data;
-
-        public string Idx
-        {
-            get { return TB_Log_Data[0].ToString(); }
-            set { TB_Log_Data[0] = value; }
-        }
-        public string DSDate
-        {
-            get { return TB_Log_Data[1].ToString(); }
-            set { TB_Log_Data[1] = value; }
-        }
-        public string DEDate
-        {
-            get { return TB_Log_Data[2].ToString(); }
-            set { TB_Log_Data[2] = value; }
-        }
-        public string StrLogCode
-        {
-            get { return TB_Log_Data[3].ToString(); }
-            set { TB_Log_Data[3] = value; }
-        }
-        public string StrLogString
-        {
-            get { return TB_Log_Data[4].ToString(); }
-            set { TB_Log_Data[4] = value; }
-        }
-        public string IdxRealConn
-        {
-            get { return TB_Log_Data[5].ToString(); }
-            set { TB_Log_Data[5] = value; }
-        }
-        public string StrCMD
-        {
-            get { return TB_Log_Data[6].ToString(); }
-            set { TB_Log_Data[6] = value; }
-        }
-        public string StrID
-        {
-            get { return TB_Log_Data[7].ToString(); }
-            set { TB_Log_Data[7] = value; }
-        }
-        public string StrPWD
-        {
-            get { return TB_Log_Data[8].ToString(); }
-            set { TB_Log_Data[8] = value; }
-        }
-        public string StrIP
-        {
-            get { return TB_Log_Data[9].ToString(); }
-            set { TB_Log_Data[9] = value; }
-        }
-        public string StrMac
-        {
-            get { return TB_Log_Data[10].ToString(); }
-            set { TB_Log_Data[10] = value; }
-        }
-        public string StrPID
-        {
-            get { return TB_Log_Data[11].ToString(); }
-            set { TB_Log_Data[11] = value; }
-        }
-        public string StrLangCode
-        {
-            get { return TB_Log_Data[12].ToString(); }
-            set { TB_Log_Data[12] = value; }
-        }
-        public string StrProgCode
-        {
-            get { return TB_Log_Data[13].ToString(); }
-            set { TB_Log_Data[13] = value; }
-        }
-        public string StrVersion
-        {
-            get { return TB_Log_Data[14].ToString(); }
-            set { TB_Log_Data[14] = value; }
-        }
-        public string NUseOpt
-        {
-            get { return TB_Log_Data[15].ToString(); }
-            set { TB_Log_Data[15] = value; }
-        }
-        public string NUseOpt2
-        {
-            get { return TB_Log_Data[16].ToString(); }
-            set { TB_Log_Data[16] = value; }
-        }
-        public string NUseOpt3
-        {
-            get { return TB_Log_Data[17].ToString(); }
-            set { TB_Log_Data[17] = value; }
-        }
-        public string NUseOpt4
-        {
-            get { return TB_Log_Data[18].ToString(); }
-            set { TB_Log_Data[18] = value; }
-        }
-        public string NNationalOpt
-        {
-            get { return TB_Log_Data[19].ToString(); }
-            set { TB_Log_Data[19] = value; }
-        }
-        public string StrProtectKey
-        {
-            get { return TB_Log_Data[20].ToString(); }
-            set { TB_Log_Data[20] = value; }
-        }
-*/
 
         public string Idx
         {
@@ -247,14 +136,6 @@ namespace LogAnalyzer2
             set { _strProtectKey = value; }
         }
 
-/*
-        public TB_Log_T(Object[] values)
-        {
-            this.TB_Log_Data = values;
-            this.TB_Log_Data[1] = this.TB_Log_Data[1].ToString().Replace("/", "-");
-            this.TB_Log_Data[2] = this.TB_Log_Data[2].ToString().Replace("/", "-");
-        }
-*/
         public TB_Log_T()
         {
             Initialize();
@@ -262,7 +143,6 @@ namespace LogAnalyzer2
 
         private void Initialize()
         {
-
             this._idx = string.Empty;
             this._dSDate = string.Empty;
             this._dEDate = string.Empty;
@@ -284,7 +164,6 @@ namespace LogAnalyzer2
             this._nUseOpt4 = string.Empty;
             this._nNationalOpt = string.Empty;
             this._strProtectKey = string.Empty;
-
         }
     }
 }
