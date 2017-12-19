@@ -90,13 +90,9 @@
     <Compile Include="ResultGridView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ResultListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="TB_Log_T.cs" />
     <Compile Include="V_Members_T.cs" />
     <Compile Include="V_Node_T.cs" />
-    <Compile Include="ModuleID_Log_T.cs" />
     <EmbeddedResource Include="CertificationDlg.resx">
       <DependentUpon>CertificationDlg.cs</DependentUpon>
     </EmbeddedResource>
