@@ -23,6 +23,10 @@ namespace LogAnalyzer2
         int nCountry = 0;
         string sDateTo = "";
         string sDateFrom = "";
+
+        private  string strSearchLang;
+        private  string strSearchProg;
+
         bool buttonUpdateStatus = false;
 
         //bool MouseMoveFlg = false;
@@ -30,14 +34,6 @@ namespace LogAnalyzer2
         public MainForm()
         {
             InitializeComponent();
-
-            if (!Constants.FLG_UPDATE)
-            {
-                MessageBox.Show("ローカル環境で実行します。\r\nサーバーには接続しません。",
-                    "注意！",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Exclamation);
-            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -56,12 +52,16 @@ namespace LogAnalyzer2
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-/*
-            //Stopwatchオブジェクトを作成する
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            //ストップウォッチを開始する
-            sw.Start();
-*/
+            InputParam param = GetInputParam();
+
+            param.strSearchLang = strSearchLang;
+            param.strSearchProg = strSearchProg;
+            if (buttonUpdateStatus)
+            {
+                DBConnection DB_Conn = new DBConnection();
+                DB_Conn.SaveDatabase_LangProg(param);
+            }
+
             TimeSpan tSpan = DateTime.Now - dateTimePickerTo.Value;
 
             String s = "";
@@ -87,7 +87,6 @@ namespace LogAnalyzer2
             if (s.Length > 0)
             {
                 MessageBox.Show(s);
-//                sw.Stop(); 
                 return;
             }
 
@@ -95,8 +94,6 @@ namespace LogAnalyzer2
 
             buttonUpdate.Enabled = false;
             buttonUpdateStatus = false;
-
-            InputParam param = GetInputParam();
 
             if (DBConnection.Instance.Execute(param) == false)
             {
@@ -108,19 +105,11 @@ namespace LogAnalyzer2
                 buttonUpdate.Enabled = true;
                 buttonUpdateStatus = true;
 
-//                RegistrySet();
-
+                strSearchLang = param.strSearchLang;
+                strSearchProg = param.strSearchProg;
             }
 
-//            sw.Stop();
-            //結果を表示する
-//            string ss = string.Format("Time={0}", sw.Elapsed.ToString());
-//            MessageBox.Show(ss);
-
-
             this.progressBar1.Value = 0;
-
-
         }
 
         private void buttonUpdate_Click(object sender, EventArgs e)
@@ -129,7 +118,11 @@ namespace LogAnalyzer2
 
             dataGridViewResult.Columns.Clear();
             ResultGridView gridVeiw = new ResultGridView(param, this.dataGridViewResult);
-            
+
+            this.dataGridViewResult.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            this.dataGridViewResult.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            this.dataGridViewResult.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+
             Constants.bDetailFlg = false;
             if (this.radioButtonUseLog.Checked == true)
             {
@@ -159,11 +152,18 @@ namespace LogAnalyzer2
                     Constants.nViewType = 4;
                 }
             }
+
+            // 自動でサイズを設定するのは、行や列を追加したり、セルに値を設定した後にする。
+            this.dataGridViewResult.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dataGridViewResult.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            this.dataGridViewResult.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (Constants.FLG_UPDATE == true && Constants.bFirstConnect) //DBConnection.Instance.IsDbConnected() == true && MessageBox.Show("Do you want to save the database?", "caption", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            if ( Constants.bFirstConnect )
             {
                 DBConnection.Instance.SaveDatabase();
                 this.progressBar1.Value = 0;
@@ -255,7 +255,6 @@ namespace LogAnalyzer2
             Excel.Application ExcelApp = null;
             Excel.Workbook ExcelWorkBook = null;
             Excel.Worksheet ExcelWorkSheet = null;
-            //            string ExcelFileName = textBoxExcelFileName.Text;
 
             try
             {
@@ -308,7 +307,6 @@ namespace LogAnalyzer2
         {
             // レジストリに記録
             DateTime dtToday = DateTime.Today;
-            //            dtToday.ToString("yyyy-MM-dd");
 
             RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\MIDAS\LogAnalyzer");
             if (key != null)
@@ -316,34 +314,6 @@ namespace LogAnalyzer2
                 key.SetValue("GetDate", dtToday.ToString("yyyy-MM-dd"));
             }
         }
-
-//         private bool RegistryGet()
-//         {
-//             // レジストリから取得
-//             bool bUpdate = true;
-//             string s = "";
-// 
-//             DateTime dtToday = DateTime.Today;
-//             //            dtToday.ToString("yyyy-MM-dd");
-// 
-//             RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\MIDAS\LogAnalyzer");
-//             if (key != null)
-//             {
-//                 string[] valuesNames = key.GetValueNames();
-//                 if (valuesNames.Contains("GetDate"))
-//                 {
-//                     s = key.GetValue("GetDate").ToString();
-// 
-//                     if (s != dtToday.ToString("yyyy-MM-dd"))
-//                         bUpdate = true;
-//                     else
-//                         bUpdate = false;
-//                 }
-//             }
-// 
-//             return true;
-// //            return bUpdate;
-//         }
 
         private void dataGridViewResult_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -363,13 +333,11 @@ namespace LogAnalyzer2
 
                     DetailAnalysis DetAnalysis = new DetailAnalysis();
                     DetAnalysis.SetDetailAnalysis(sID, sComp);
-
-
                 }
             }
 
         }
-
+/*
         private void contextMenuStrip1_MouseClick(object sender, MouseEventArgs e)
         {
 //            MessageBox.Show("TEST");
@@ -379,10 +347,11 @@ namespace LogAnalyzer2
         {
 
         }
+*/
     }
     static class Constants
     {
-        static public bool FLG_UPDATE = true;   // ローカル開発用
+//        static public bool FLG_UPDATE = true;   // ローカル開発用
 //        static public bool FLG_UPDATE = false;   // ローカル開発用
         //        public const bool FLG_UPDATE = false;
 
