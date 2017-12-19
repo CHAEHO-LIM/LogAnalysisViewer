@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -40,8 +39,6 @@
             this.comboBoxProduct = new System.Windows.Forms.ComboBox();
             this.comboBoxCountry = new System.Windows.Forms.ComboBox();
             this.buttonUpdate = new System.Windows.Forms.Button();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.クリップボードにコピーToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxLogType = new System.Windows.Forms.GroupBox();
             this.radioButtonFunctionLog = new System.Windows.Forms.RadioButton();
             this.radioButtonUseLog = new System.Windows.Forms.RadioButton();
@@ -58,7 +55,6 @@
             this.groupBoxExcelWrite = new System.Windows.Forms.GroupBox();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
             this.groupBox1.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
             this.groupBoxLogType.SuspendLayout();
             this.groupBoxResult.SuspendLayout();
             this.groupBoxDetail.SuspendLayout();
@@ -186,20 +182,6 @@
             this.buttonUpdate.Text = "Update";
             this.buttonUpdate.UseVisualStyleBackColor = true;
             this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.クリップボードにコピーToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(169, 26);
-            this.contextMenuStrip1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.contextMenuStrip1_MouseClick);
-            // 
-            // クリップボードにコピーToolStripMenuItem
-            // 
-            this.クリップボードにコピーToolStripMenuItem.Name = "クリップボードにコピーToolStripMenuItem";
-            this.クリップボードにコピーToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.クリップボードにコピーToolStripMenuItem.Text = "クリップボードにコピー";
             // 
             // groupBoxLogType
             // 
@@ -350,13 +332,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewResult.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewResult.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridViewResult.Location = new System.Drawing.Point(12, 124);
             this.dataGridViewResult.Name = "dataGridViewResult";
             this.dataGridViewResult.RowTemplate.Height = 21;
             this.dataGridViewResult.Size = new System.Drawing.Size(1147, 379);
             this.dataGridViewResult.TabIndex = 15;
-            this.dataGridViewResult.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewResult_CellContentClick);
             this.dataGridViewResult.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewResult_CellMouseDoubleClick);
             // 
             // MainForm
@@ -377,7 +357,6 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.groupBoxLogType.ResumeLayout(false);
             this.groupBoxLogType.PerformLayout();
             this.groupBoxResult.ResumeLayout(false);
@@ -417,8 +396,6 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.GroupBox groupBoxExcelWrite;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem クリップボードにコピーToolStripMenuItem;
         private System.Windows.Forms.DataGridView dataGridViewResult;
     }
 }
