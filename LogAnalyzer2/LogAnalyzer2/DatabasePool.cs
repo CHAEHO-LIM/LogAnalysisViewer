@@ -10,10 +10,11 @@ namespace LogAnalyzer2
     public class DatabasePool
     {
         private List<TB_Log_T> _TB_Log_List;
+        private List<TB_Log_T> _TB_Log_SAVE_List;
         private List<MidasUpdate_nIP_T> _MidasUpdate_nIP_List;
-        private Dictionary<string,V_Node_T> _V_Node_Dic;
+        private List<MidasUpdate_nIP_T> _MidasUpdate_nIP_SAVE_List;
+        private Dictionary<string, V_Node_T> _V_Node_Dic;
         private Dictionary<string, V_Members_T> _V_Members_Dic;
-//        private Dictionary<string,ModuleID_Log_T> _ModuleID_Log_Dic;
 
         private static DatabasePool _instance;
         public static DatabasePool Instance
@@ -32,13 +33,25 @@ namespace LogAnalyzer2
             set { _TB_Log_List = value; }
         }
 
+        public List<TB_Log_T> TB_Log_SAVE_List
+        {
+            get { return _TB_Log_SAVE_List; }
+            set { _TB_Log_SAVE_List = value; }
+        }
+
+        public List<MidasUpdate_nIP_T> MidasUpdate_nIP_SAVE_List
+        {
+            get { return _MidasUpdate_nIP_SAVE_List; }
+            set { _MidasUpdate_nIP_SAVE_List = value; }
+        }
+
         public List<MidasUpdate_nIP_T> MidasUpdate_nIP_List
         {
             get { return _MidasUpdate_nIP_List; }
             set { _MidasUpdate_nIP_List = value; }
         }
 
-        public Dictionary<string,V_Node_T> V_Node_Dic
+        public Dictionary<string, V_Node_T> V_Node_Dic
         {
             get { return _V_Node_Dic; }
             set { _V_Node_Dic = value; }
