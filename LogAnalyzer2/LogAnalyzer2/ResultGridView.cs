@@ -324,7 +324,7 @@ namespace LogAnalyzer2
             if (diffYear >= 0)
             {
                 int maxMonth = toMonth;
-                if (diffYear > 1)
+                if (diffYear >= 1)
                     maxMonth = 12;
 
                 for (int i = fromMonth; i <= maxMonth; i++)
@@ -348,7 +348,6 @@ namespace LogAnalyzer2
                         colName = string.Format("{0}-0{1}", year, i);
                     else
                         colName = string.Format("{0}-{1}", year, i);
-                    this._gridViewResult.Columns[0].Name=colName;
                     columnNames.Add(colName);
                 }
             }
@@ -362,7 +361,6 @@ namespace LogAnalyzer2
                         colName = string.Format("{0}-0{1}", toYear, i);
                     else
                         colName = string.Format("{0}-{1}", toYear, i);
-                    this._gridViewResult.Columns[0].Name=colName;
                     columnNames.Add(colName);
                 }
             }

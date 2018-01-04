@@ -219,7 +219,8 @@ namespace LogAnalyzer2
 
             if (DatabasePool.Instance.TB_Log_List.Count > 0)
             {
-                string strTime = DatabasePool.Instance.TB_Log_List.Max(s => DateTime.Parse(s.DSDate)).ToString();
+                CultureInfo culture = new CultureInfo("en-US");
+                string strTime = DatabasePool.Instance.TB_Log_List.Max(s => DateTime.Parse(s.DSDate)).ToString(culture);
 
                 strRegist_datetime = strTime;
 
@@ -337,7 +338,8 @@ namespace LogAnalyzer2
             if (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0)
             {
 //                string strTime = DatabasePool.Instance.MidasUpdate_nIP_List.Max(s =>s.Regdate);
-                string strTime = DatabasePool.Instance.MidasUpdate_nIP_List.Max(s => DateTime.Parse(s.Regdate)).ToString();
+                CultureInfo culture = new CultureInfo("en-US");
+                string strTime = DatabasePool.Instance.MidasUpdate_nIP_List.Max(s => DateTime.Parse(s.Regdate)).ToString(culture);
 
                 strRegist_datetime = strTime;
 
@@ -562,8 +564,9 @@ namespace LogAnalyzer2
                     System.Diagnostics.Debug.Assert(false, "IDは複数存在出来ません。");
                 }
             }
-            
-            strRegist_datetime = memberList.Max(s => DateTime.Parse(s.Regist_datetime)).ToString();
+
+            CultureInfo culture = new CultureInfo("en-US");
+            strRegist_datetime = memberList.Max(s => DateTime.Parse(s.Regist_datetime)).ToString(culture);
 
             return (DatabasePool.Instance.V_Members_Dic.Count > 0);
         }

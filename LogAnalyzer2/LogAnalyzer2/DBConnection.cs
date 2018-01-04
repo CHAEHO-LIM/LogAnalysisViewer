@@ -158,6 +158,7 @@ namespace LogAnalyzer2
                     filter.UserID = strID;
                     filter.Company = strCompany;
                     filter.UserIP = data.ServerIP;
+                    filter.Date = data.Regdate;
                     if (filter.IsShowData() == false)
                         continue;
 
@@ -217,6 +218,7 @@ namespace LogAnalyzer2
                         filter.UserID = strID;
                         filter.Company = strCompany;
                         filter.UserIP = data.StrIP;
+                        filter.Date = data.DSDate;
                         if (filter.IsShowData() == false)
                             continue;
 

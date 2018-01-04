@@ -11,6 +11,7 @@ namespace LogAnalyzer2
         public string UserID;
         public string Company;
         public string UserIP;
+        public string Date;
         private InputParam _inputParam;
         List<string> _CompanyIPList;
 
@@ -25,6 +26,7 @@ namespace LogAnalyzer2
             this.UserID = string.Empty;
             this.Company = string.Empty;
             this.UserIP = string.Empty;
+            this.Date = string.Empty;
             _CompanyIPList = new List<string>();
             _CompanyIPList.Add("124.110.62");//.155");
             _CompanyIPList.Add("121.157.60");//.6");
@@ -71,6 +73,14 @@ namespace LogAnalyzer2
                 if (!this.UserID.ToLower().Contains(_inputParam.strFilterUserID.ToLower()))
                     return false;
             }
+
+            DateTime fromTime = DateTime.Parse(_inputParam.strDateTimePickerFrom);
+            DateTime toTime = DateTime.Parse(_inputParam.strDateTimePickerTo);
+            toTime = toTime.AddDays(1);
+            DateTime dayTime = DateTime.Parse(this.Date);
+
+            if (fromTime > dayTime || toTime < dayTime)
+                return false;
 
             return true;
         }
