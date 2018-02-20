@@ -36,8 +36,8 @@ namespace LogAnalyzer2
 
             NowReadCollectString += this._inputParam.strProductName + ",";
             NowReadCollectString += this._inputParam.strCountry + ",";
-            NowReadCollectString += this._inputParam.strDateTimePickerTo + ",";
-            NowReadCollectString += this._inputParam.strDateTimePickerFrom + ",";
+//            NowReadCollectString += this._inputParam.strDateTimePickerTo + ",";
+//            NowReadCollectString += this._inputParam.strDateTimePickerFrom + ",";
 
             if (Constants.ReadCollectString != NowReadCollectString)
             {
@@ -116,13 +116,20 @@ namespace LogAnalyzer2
             return true;
         }
 
-        private bool GetDatabaseTB_Log()
+        public bool ReadLocalData()
         {
+            this._inputParam.progressBar.Style = ProgressBarStyle.Continuous;
+            this._inputParam.progressBar.Minimum = 0;
+            this._inputParam.progressBar.Maximum = 5;
+            this._inputParam.progressBar.Step = 1;
+            this._inputParam.progressBar.Value = 0;
+
+            // Read V_TB_LOG_List 
             DatabasePool.Instance.TB_Log_List.Clear();
             string strLangCode = GetStrLangCode();
             string strProgCode = GetStrProgCode();
 
-            string strFilePath = Application.StartupPath + "\\V_TB_LOG_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+            string strFilePath = Constants.sSaveFolder + "V_TB_LOG_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
             string strRegist_datetime = string.Empty;
 
             if (File.Exists(strFilePath) == true)
@@ -130,9 +137,71 @@ namespace LogAnalyzer2
                 if (LoadV_TB_LOG_Table_XML(strFilePath, ref strRegist_datetime) == false)
                     return false;
             }
+            DatabasePool.Instance.TB_Log_SAVE_List = new List<TB_Log_T>(DatabasePool.Instance.TB_Log_List);
+            this._inputParam.progressBar.PerformStep();
 
-            string dayFrom = _inputParam.strDateTimePickerFrom;
-            string dayTo = _inputParam.strDateTimePickerTo;
+            // Read V_MidasUpdate_List 
+            if (Constants.bNodeReadFlg == false)
+                DatabasePool.Instance.MidasUpdate_nIP_List.Clear();
+
+            strFilePath = Constants.sSaveFolder + "V_MidasUpdate_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+            strRegist_datetime = string.Empty;
+
+            if (File.Exists(strFilePath) == true)
+            {
+                if (LoadV_MidasUpdate_Table_XML(strFilePath, ref strRegist_datetime) == false)
+                    return false;
+            }
+            DatabasePool.Instance.MidasUpdate_nIP_SAVE_List = new List<MidasUpdate_nIP_T>(DatabasePool.Instance.MidasUpdate_nIP_List);
+            this._inputParam.progressBar.PerformStep();
+
+            // Read V_Node_List
+            if (Constants.bNodeReadFlg == false)
+                DatabasePool.Instance.V_Node_Dic.Clear();
+
+            strFilePath = Constants.sSaveFolder + "V_Node_List.xml";
+            double dFromTimestamp = 0;
+
+            if (Constants.bNodeReadFlg == false)
+            {
+                if (File.Exists(strFilePath) == true)
+                {
+                    if (LoadV_Node_Table_XML(strFilePath, ref dFromTimestamp) == false)
+                        return false;
+                }
+            }
+
+            // Read V_Members_List
+            DatabasePool.Instance.V_Members_Dic.Clear();
+            this._inputParam.progressBar.PerformStep();
+
+            strFilePath = Constants.sSaveFolder + "V_Members_List.xml";
+            strRegist_datetime = string.Empty;
+
+            if (File.Exists(strFilePath) == true)
+            {
+                if (LoadV_Members_Table_XML(strFilePath, ref strRegist_datetime) == false)
+                    return false;
+            }
+            this._inputParam.progressBar.PerformStep();
+
+            return true;
+        }
+
+        private bool GetDatabaseTB_Log()
+        {
+            DatabasePool.Instance.TB_Log_List.Clear();
+            string strLangCode = GetStrLangCode();
+            string strProgCode = GetStrProgCode();
+
+            string strFilePath = Constants.sSaveFolder + "V_TB_LOG_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+            string strRegist_datetime = string.Empty;
+
+            if (File.Exists(strFilePath) == true)
+            {
+                if (LoadV_TB_LOG_Table_XML(strFilePath, ref strRegist_datetime) == false)
+                    return false;
+            }
 
             string quary = string.Format("SELECT * FROM TB_Log WHERE strLangCode='{0}' AND strProgCode='{1}' AND dSDate>='{2}' ORDER BY dSDate ASC;", strLangCode, strProgCode, strRegist_datetime);
 
@@ -196,7 +265,7 @@ namespace LogAnalyzer2
             }
 
             DatabasePool.Instance.TB_Log_SAVE_List = new List<TB_Log_T>(DatabasePool.Instance.TB_Log_List);
-            DatabasePool.Instance.TB_Log_List = DatabasePool.Instance.TB_Log_List.FindAll(x => x.DSDate.CompareTo(this._inputParam.strDateTimePickerFrom.ToString()) > 0);
+//            DatabasePool.Instance.TB_Log_List = DatabasePool.Instance.TB_Log_List.FindAll(x => x.DSDate.CompareTo(this._inputParam.strDateTimePickerFrom.ToString()) > 0);
 
             return (DatabasePool.Instance.TB_Log_List.Count > 0);
         }
@@ -231,12 +300,13 @@ namespace LogAnalyzer2
 
         private bool GetDatabaseMidasUpdate_nIP()
         {
-            DatabasePool.Instance.MidasUpdate_nIP_List.Clear();
+            if( Constants.bNodeReadFlg == false)
+                DatabasePool.Instance.MidasUpdate_nIP_List.Clear();
+    
             string strLangCode = GetStrLangCode();
             string strProgCode = GetStrProgCode();
 
-            string strFilePath = Application.StartupPath + "\\V_MidasUpdate_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
-
+            string strFilePath = Constants.sSaveFolder + "V_MidasUpdate_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
             string strRegist_datetime = string.Empty;
 
             if (File.Exists(strFilePath) == true)
@@ -245,9 +315,6 @@ namespace LogAnalyzer2
                     return false;
             }
 
-
-            string dayFrom = _inputParam.strDateTimePickerFrom;
-            string dayTo = _inputParam.strDateTimePickerTo;
             int nProductNum = GetProductNum();
             int nLangageNum = GetLangageNum();
 
@@ -314,26 +381,27 @@ namespace LogAnalyzer2
             }
 
             DatabasePool.Instance.MidasUpdate_nIP_SAVE_List = new List<MidasUpdate_nIP_T>(DatabasePool.Instance.MidasUpdate_nIP_List);
-            DatabasePool.Instance.MidasUpdate_nIP_List = DatabasePool.Instance.MidasUpdate_nIP_List.FindAll(x => x.Regdate.CompareTo(this._inputParam.strDateTimePickerFrom.ToString()) > 0);
+//            DatabasePool.Instance.MidasUpdate_nIP_List = DatabasePool.Instance.MidasUpdate_nIP_List.FindAll(x => x.Regdate.CompareTo(this._inputParam.strDateTimePickerFrom.ToString()) > 0);
 
             return (DatabasePool.Instance.MidasUpdate_nIP_List.Count >= 0);
         }
 
         private bool LoadV_MidasUpdate_Table_XML(string strFilePath, ref string strRegist_datetime)
         {
-            try
-            {
-                XmlSerializer deSerializer = new XmlSerializer(typeof(List<MidasUpdate_nIP_T>));
-                StreamReader reader = new StreamReader(strFilePath);
-                DatabasePool.Instance.MidasUpdate_nIP_List = (List<MidasUpdate_nIP_T>)deSerializer.Deserialize(reader);
-                this._inputParam.progressBar.PerformStep();
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return false;
-            }
+
+                try
+                {
+                    XmlSerializer deSerializer = new XmlSerializer(typeof(List<MidasUpdate_nIP_T>));
+                    StreamReader reader = new StreamReader(strFilePath);
+                    DatabasePool.Instance.MidasUpdate_nIP_List = (List<MidasUpdate_nIP_T>)deSerializer.Deserialize(reader);
+                    this._inputParam.progressBar.PerformStep();
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
 
             if (DatabasePool.Instance.MidasUpdate_nIP_List.Count > 0)
             {
@@ -342,7 +410,6 @@ namespace LogAnalyzer2
                 string strTime = DatabasePool.Instance.MidasUpdate_nIP_List.Max(s => DateTime.Parse(s.Regdate)).ToString(culture);
 
                 strRegist_datetime = strTime;
-
             }
             else
             {
@@ -356,32 +423,47 @@ namespace LogAnalyzer2
 
         private bool GetDatabaseV_Node_Table()
         {
-            DatabasePool.Instance.V_Node_Dic.Clear();
+            if (Constants.bNodeReadFlg == false)
+                DatabasePool.Instance.V_Node_Dic.Clear();
 
-            string strFilePath = Application.StartupPath + "\\V_Node_List.xml";
+            string strFilePath = Constants.sSaveFolder + "V_Node_List.xml";
             double dFromTimestamp = 0;
 
-            if (File.Exists(strFilePath) == true)
+            if( Constants.bNodeReadFlg == false)
             {
-                if (LoadV_Node_Table_XML(strFilePath, ref dFromTimestamp) == false)
-                    return false;
+                if (File.Exists(strFilePath) == true)
+                {
+                    if (LoadV_Node_Table_XML(strFilePath, ref dFromTimestamp) == false)
+                        return false;
+                }
+                else
+                {
+                    DateTime fromDT = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                    dFromTimestamp = ConvertToUnixTimestamp(fromDT);
+                }
             }
             else
             {
-                DateTime fromDT = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-                dFromTimestamp = ConvertToUnixTimestamp(fromDT);
-
+//                List<string> valsList = new List<string>(DatabasePool.Instance.V_Node_Dic.Max(sDat => sDat.Value.Regist_timesta
+                double dVal = 0;
+                string strTime;
+                strTime= DatabasePool.Instance.V_Node_Dic.Max(sDat => sDat.Value.Regist_timestamp).ToString();
+                if (double.TryParse(strTime, out dVal) == true)
+                    dFromTimestamp = dVal;
+//                IOrderedEnumerable<KeyValuePair<string, int>> sorted =DatabasePool.Instance.V_Node_Dic.OrderBy(sDat => sDat.Value.Regist_timestamp);
+//                dFromTimestamp = DatabasePool.Instance.V_Node_Dic.OrderBy(sDat => sDat.Value.Regist_timestamp).First().ToString();
+//                dFromTimestamp = DatabasePool.Instance.V_Node_Dic.OrderByDescending(Function(d) d.Value).First.Key;
             }
-
-            DateTime dt = ConvertFromUnixTimestamp(dFromTimestamp);
-            DateTime dtToday = DateTime.Today;
+//            DateTime dt = ConvertFromUnixTimestamp(dFromTimestamp);
+//            DateTime dtToday = DateTime.Today;
 
             Constants.bFirstConnect = true;
 
             List<V_Node_T> nodeList = new List<V_Node_T>();
             double dNowTimestamp = ConvertToUnixTimestamp(DateTime.Now);
 
-            string quary = string.Format("SELECT * FROM V_Node WHERE regist_timestamp > '{0}' AND regist_timestamp <= '{1}' ORDER BY regist_timestamp ASC", dFromTimestamp, dNowTimestamp);
+//            string quary = string.Format("SELECT * FROM V_Node WHERE regist_timestamp > '{0}' AND regist_timestamp <= '{1}' ORDER BY regist_timestamp ASC", dFromTimestamp, dNowTimestamp);
+            string quary = string.Format("SELECT * FROM V_Node WHERE regist_timestamp >= '{0}' ORDER BY regist_timestamp ASC", dFromTimestamp);//, dNowTimestamp);
 
             try
             {
@@ -456,7 +538,7 @@ namespace LogAnalyzer2
         {
 
             List<V_Node_T> nodeList = new List<V_Node_T>();
-            DatabasePool.Instance.V_Node_Dic.Clear();
+//            DatabasePool.Instance.V_Node_Dic.Clear();
 
             try
             {
@@ -472,6 +554,7 @@ namespace LogAnalyzer2
                 return false;
             }
 
+
             if (nodeList.Count > 0)
             {
 //                string strTime = nodeList[nodeList.Count - 1].Regist_timestamp;
@@ -481,19 +564,21 @@ namespace LogAnalyzer2
                 if (double.TryParse(strTime, out dVal) == true)
                     dFromTimestamp = dVal;
 
+                DatabasePool.Instance.V_Node_Dic = nodeList.ToDictionary(nList => nList.Id);
+
+/*
                 foreach (V_Node_T nList in nodeList)
                 {
                     if (DatabasePool.Instance.V_Node_Dic.ContainsKey(nList.Id) == false)
                     {
                         DatabasePool.Instance.V_Node_Dic.Add(nList.Id, nList);
-
                     }
                     else
                     {
                         nList.Id=nList.Id;
                     }
                 }
- 
+ */
             }
 
             return (DatabasePool.Instance.V_Node_Dic.Count > 0);
@@ -503,7 +588,7 @@ namespace LogAnalyzer2
         {
             DatabasePool.Instance.V_Members_Dic.Clear();
 
-            string strFilePath = Application.StartupPath + "\\V_Members_List.xml";
+            string strFilePath = Constants.sSaveFolder + "V_Members_List.xml";
             string strRegist_datetime = string.Empty;
 
             string strDatatimeDbPattern = "yyyy-MM-dd hh:mm:ss tt";
@@ -535,18 +620,35 @@ namespace LogAnalyzer2
         private bool LoadV_Members_Table_XML(string strFilePath, ref string strRegist_datetime)
         {
             List<V_Members_T> memberList = null;
-            try
+            CultureInfo culture = new CultureInfo("en-US");
+ 
+            if (Constants.bNodeReadFlg == false)
             {
-                XmlSerializer deSerializer = new XmlSerializer(typeof(List<V_Members_T>));
-                StreamReader reader = new StreamReader(strFilePath);
-                memberList = (List<V_Members_T>)deSerializer.Deserialize(reader);
-                this._inputParam.progressBar.PerformStep();
-                reader.Close();
+                try
+                {
+                    XmlSerializer deSerializer = new XmlSerializer(typeof(List<V_Members_T>));
+                    StreamReader reader = new StreamReader(strFilePath);
+                    memberList = (List<V_Members_T>)deSerializer.Deserialize(reader);
+                    this._inputParam.progressBar.PerformStep();
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message);
-                return false;
+//                List<KeyValuePair<string, V_Members_T>> Memblist = new List<KeyValuePair<string, V_Members_T>>(DatabasePool.Instance.V_Members_Dic);
+//                Memblist.OrderBy(x => x.Value.Regist_datetime);
+//                strRegist_datetime = Memblist[0].Value.Regist_datetime;
+
+//                List<string> Memblist = new List<string>DatabasePool.Instance.V_Members_Dic.OrderBy(sDat => DateTime.Parse(sDat.Value.Regist_datetime)).ToString(culture);
+//                strRegist_datetime = DatabasePool.Instance.V_Members_Dic.Max(sDat => DateTime.Parse(sDat.Value.Regist_datetime)).ToString(culture);
+
+                strRegist_datetime = Constants.sMembDate;
+                return true;
             }
 
             if (memberList.Count < 1)
@@ -565,8 +667,9 @@ namespace LogAnalyzer2
                 }
             }
 
-            CultureInfo culture = new CultureInfo("en-US");
+//            CultureInfo culture = new CultureInfo("en-US");
             strRegist_datetime = memberList.Max(s => DateTime.Parse(s.Regist_datetime)).ToString(culture);
+            Constants.sMembDate=strRegist_datetime;
 
             return (DatabasePool.Instance.V_Members_Dic.Count > 0);
         }
@@ -580,7 +683,8 @@ namespace LogAnalyzer2
             string strNow = DateTime.Now.ToString(strDatatimeDbPattern, culture);
 
             //regist_datetimeの時分秒まで計算しなきゃならないが後でいます。
-            string quary = string.Format("SELECT * FROM V_Members WHERE regist_datetime >= '{0}' AND regist_datetime < '{1}' ORDER BY regist_datetime ASC", strRegist_datetime, strNow);
+//            string quary = string.Format("SELECT * FROM V_Members WHERE regist_datetime >= '{0}' AND regist_datetime < '{1}' ORDER BY regist_datetime ASC", strRegist_datetime, strNow);
+            string quary = string.Format("SELECT * FROM V_Members WHERE regist_datetime >= '{0}' ORDER BY regist_datetime ASC", strRegist_datetime);
 
             try
             {
@@ -694,7 +798,8 @@ namespace LogAnalyzer2
             string strNow = DateTime.Now.ToString(strDatatimeDbPattern, culture);
 
             //regist_datetimeの時分秒まで計算しなきゃならないが後でいます。
-            string quary = string.Format("SELECT * FROM V_Members WHERE update_datetime > '{0}' AND update_datetime < '{1}' ORDER BY regist_datetime ASC", strRegist_datetime, strNow);
+//            string quary = string.Format("SELECT * FROM V_Members WHERE update_datetime > '{0}' AND update_datetime < '{1}' ORDER BY regist_datetime ASC", strRegist_datetime, strNow);
+            string quary = string.Format("SELECT * FROM V_Members WHERE update_datetime >= '{0}' ORDER BY regist_datetime ASC", strRegist_datetime);
 
             try
             {
