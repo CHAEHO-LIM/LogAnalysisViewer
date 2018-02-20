@@ -421,40 +421,59 @@ namespace LogAnalyzer2
         {
             this._inputParam.progressBar.Style = ProgressBarStyle.Continuous;
             this._inputParam.progressBar.Minimum = 0;
-            this._inputParam.progressBar.Maximum = 6;
+            this._inputParam.progressBar.Maximum = 5;
             this._inputParam.progressBar.Step = 1;
+
             this._inputParam.progressBar.PerformStep();
+
 
             //V_Node Table Save
-            string strFilePath = Application.StartupPath + "\\V_Node_List.xml";
-            if (File.Exists(strFilePath) == true)
-                File.Delete(strFilePath);
+            string strFilePath = Constants.sSaveFolder + "V_Node_List.xml";
+//            if (File.Exists(strFilePath) == true)
+//                File.Delete(strFilePath);
 
-            this._inputParam.progressBar.PerformStep();
+//            this._inputParam.progressBar.PerformStep();
+            try
+            {
+                List<V_Node_T> nodeList = DatabasePool.Instance.V_Node_Dic.Values.ToList();
+                XmlSerializer serializer = new XmlSerializer(typeof(List<V_Node_T>));
+                
+//               if (File.Exists(strFilePath) == true)
+//                    File.Delete(strFilePath);
 
-            List<V_Node_T> nodeList = DatabasePool.Instance.V_Node_Dic.Values.ToList();
-            XmlSerializer serializer = new XmlSerializer(typeof(List<V_Node_T>));
-            FileStream fs = new FileStream(strFilePath, FileMode.Create);
-            serializer.Serialize(fs, nodeList);
-            this._inputParam.progressBar.PerformStep();
-            fs.Close();
-            serializer = null;
+                FileStream fs = new FileStream(strFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                serializer.Serialize(fs, nodeList);
+                fs.Close();
+                serializer = null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             this._inputParam.progressBar.PerformStep();
 
             //V_Members Table Save
-            strFilePath = Application.StartupPath + "\\V_Members_List.xml";
-            if (File.Exists(strFilePath) == true)
-                File.Delete(strFilePath);
+            strFilePath = Constants.sSaveFolder + "V_Members_List.xml";
+//            if (File.Exists(strFilePath) == true)
+//                File.Delete(strFilePath);
 
-            this._inputParam.progressBar.PerformStep();
+            try
+            {
+                List<V_Members_T> memberList = DatabasePool.Instance.V_Members_Dic.Values.ToList();
+                XmlSerializer serializer = new XmlSerializer(typeof(List<V_Members_T>));
 
-            List<V_Members_T> memberList = DatabasePool.Instance.V_Members_Dic.Values.ToList();
-            serializer = new XmlSerializer(typeof(List<V_Members_T>));
-            fs = new FileStream(strFilePath, FileMode.Create);
-            serializer.Serialize(fs, memberList);
-            this._inputParam.progressBar.PerformStep();
-            fs.Close();
-            serializer = null;
+ //               if (File.Exists(strFilePath) == true)
+ //                   File.Delete(strFilePath);
+
+                FileStream fs = new FileStream(strFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                serializer.Serialize(fs, memberList);
+                fs.Close();
+                serializer = null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             this._inputParam.progressBar.PerformStep();
 
             SaveDatabase_LangProg(this._inputParam);
@@ -473,33 +492,56 @@ namespace LogAnalyzer2
             if (DatabasePool.Instance.TB_Log_SAVE_List.Count > 0)
             {
 
-                strFile = "\\V_TB_LOG_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+                strFile = "V_TB_LOG_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
                 // TB_Log Save
-                strFilePath = Application.StartupPath + strFile;
-                if (File.Exists(strFilePath) == true)
-                    File.Delete(strFilePath);
+                strFilePath = Constants.sSaveFolder + strFile;
+//                if (File.Exists(strFilePath) == true)
+//                    File.Delete(strFilePath);
+                try
+                {
+                    serializer = new XmlSerializer(typeof(List<TB_Log_T>));
 
-                serializer = new XmlSerializer(typeof(List<TB_Log_T>));
-                fs = new FileStream(strFilePath, FileMode.Create);
-                serializer.Serialize(fs, DatabasePool.Instance.TB_Log_SAVE_List);
-                fs.Close();
-                serializer = null;
+//                    if (File.Exists(strFilePath) == true)
+//                        File.Delete(strFilePath);
+
+                    fs = new FileStream(strFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                    serializer.Serialize(fs, DatabasePool.Instance.TB_Log_SAVE_List);
+                    fs.Close();
+                    serializer = null;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
+            param.progressBar.PerformStep();
 
             if (DatabasePool.Instance.MidasUpdate_nIP_SAVE_List.Count > 0)
             {
-                strFile = "\\V_MidasUpdate_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
+                strFile = "V_MidasUpdate_List" + "_" + strLangCode + "_" + strProgCode + ".xml";
                 // MidasUpdate_nIP_T Save
-                strFilePath = Application.StartupPath + strFile;
-                if (File.Exists(strFilePath) == true)
-                    File.Delete(strFilePath);
+                strFilePath = Constants.sSaveFolder + strFile;
+//                if (File.Exists(strFilePath) == true)
+//                    File.Delete(strFilePath);
 
-                serializer = new XmlSerializer(typeof(List<MidasUpdate_nIP_T>));
-                fs = new FileStream(strFilePath, FileMode.Create);
-                serializer.Serialize(fs, DatabasePool.Instance.MidasUpdate_nIP_SAVE_List);
-                fs.Close();
-                serializer = null;
+                try
+                {
+                    serializer = new XmlSerializer(typeof(List<MidasUpdate_nIP_T>));
+
+//                    if (File.Exists(strFilePath) == true)
+//                        File.Delete(strFilePath);
+
+                    fs = new FileStream(strFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                    serializer.Serialize(fs, DatabasePool.Instance.MidasUpdate_nIP_SAVE_List);
+                    fs.Close();
+                    serializer = null;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
+            param.progressBar.PerformStep();
         }
 
         private string CovertLogCode(string strLog)
