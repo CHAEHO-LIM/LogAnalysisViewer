@@ -48,6 +48,45 @@ namespace LogAnalyzer2
             this.dateTimePickerTo.Value = DateTime.Now;
             this.comboBoxCountry.SelectedIndex = 0;
             this.comboBoxProduct.SelectedIndex = 0;
+
+            listView1.View = View.Details;
+            listView1.Columns.Add("Soft");
+            listView1.Columns.Add("Update");
+
+            ListViewItem lvi;
+
+            string strFilePath = Constants.sSaveFolder + "V_TB_LOG_List_JP_MDW.xml";
+            DateTime dtAccess = System.IO.File.GetLastWriteTime(strFilePath);
+            lvi = listView1.Items.Add("CADRobo(Drawing)");
+            lvi.SubItems.Add(dtAccess.ToString());
+
+            strFilePath = Constants.sSaveFolder + "V_TB_LOG_List_JP_EGN.xml";
+            dtAccess = System.IO.File.GetLastWriteTime(strFilePath);
+            lvi = listView1.Items.Add("CADRobo(eGen)");
+            lvi.SubItems.Add(dtAccess.ToString());
+
+            strFilePath = Constants.sSaveFolder + "V_TB_LOG_List_JP_MDR.xml";
+            dtAccess = System.IO.File.GetLastWriteTime(strFilePath);
+            lvi = listView1.Items.Add("midas Drawing");
+            lvi.SubItems.Add(dtAccess.ToString());
+
+            strFilePath = Constants.sSaveFolder + "V_TB_LOG_List_JP_EGR.xml";
+            dtAccess = System.IO.File.GetLastWriteTime(strFilePath);
+            lvi = listView1.Items.Add("midas eGen");
+            lvi.SubItems.Add(dtAccess.ToString());
+
+            strFilePath = Constants.sSaveFolder + "V_TB_LOG_List_JP_IGN.xml";
+            dtAccess = System.IO.File.GetLastWriteTime(strFilePath);
+            lvi = listView1.Items.Add("midas iGen");
+            lvi.SubItems.Add(dtAccess.ToString());
+
+            strFilePath = Constants.sSaveFolder + "V_Members_List.xml";
+            dtAccess = System.IO.File.GetLastWriteTime(strFilePath);
+            lvi = listView1.Items.Add("Member List");
+            lvi.SubItems.Add(dtAccess.ToString());
+
+            listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+
         }
 
         private void buttonConnect_Click(object sender, EventArgs e)
@@ -72,12 +111,13 @@ namespace LogAnalyzer2
 
             DateTime tNow = DateTime.Now;
 
+/*
             tSpan = dateTimePickerFrom.Value - tNow.AddMonths(-3);
             if (tSpan.Days < 0)
             {
                 s = s + "Please specify the date up to 3 months ago.\n";
             }
-
+*/
             tSpan = dateTimePickerTo.Value - dateTimePickerFrom.Value;
             if (tSpan.Seconds < 0)
             {
@@ -95,6 +135,7 @@ namespace LogAnalyzer2
             buttonUpdate.Enabled = false;
             buttonUpdateStatus = false;
 
+
             if (DBConnection.Instance.Execute(param) == false)
             {
                 MessageBox.Show("Database is not connected. Try to again.");
@@ -104,6 +145,8 @@ namespace LogAnalyzer2
                 MessageBox.Show("Database Connection is Success!");
                 buttonUpdate.Enabled = true;
                 buttonUpdateStatus = true;
+
+                Constants.bNodeReadFlg = true;
 
                 strSearchLang = param.strSearchLang;
                 strSearchProg = param.strSearchProg;
@@ -115,6 +158,10 @@ namespace LogAnalyzer2
         private void buttonUpdate_Click(object sender, EventArgs e)
         {
             InputParam param = GetInputParam();
+
+            DatabasePool.Instance.TB_Log_List = DatabasePool.Instance.TB_Log_SAVE_List.FindAll(x => x.DSDate.CompareTo(param.strDateTimePickerFrom.ToString()) > 0);
+            DatabasePool.Instance.MidasUpdate_nIP_List = DatabasePool.Instance.MidasUpdate_nIP_SAVE_List.FindAll(x => x.Regdate.CompareTo(param.strDateTimePickerFrom.ToString()) > 0);
+
 
             dataGridViewResult.Columns.Clear();
             ResultGridView gridVeiw = new ResultGridView(param, this.dataGridViewResult);
@@ -199,12 +246,12 @@ namespace LogAnalyzer2
 
         private void dateTimePickerFrom_ValueChanged(object sender, EventArgs e)
         {
-            buttonUpdateCheck();
+//            buttonUpdateCheck();
         }
 
         private void dateTimePickerTo_ValueChanged(object sender, EventArgs e)
         {
-            buttonUpdateCheck();
+//            buttonUpdateCheck();
         }
 
         private void buttonUpdateCheck()
@@ -213,10 +260,10 @@ namespace LogAnalyzer2
             {
                 int Prd = comboBoxProduct.SelectedIndex * 10;
                 int Comp = comboBoxCountry.SelectedIndex;
-                string sTo = dateTimePickerTo.Value.ToString("yyyy-MM-dd").Substring(0, 10);
-                string sFrom = dateTimePickerFrom.Value.ToString("yyyy-MM-dd").Substring(0, 10);
+//                string sTo = dateTimePickerTo.Value.ToString("yyyy-MM-dd").Substring(0, 10);
+//                string sFrom = dateTimePickerFrom.Value.ToString("yyyy-MM-dd").Substring(0, 10);
 
-                if (nProduct == Prd && nCountry == Comp && sDateTo == sTo && sDateFrom == sFrom)
+                if (nProduct == Prd && nCountry == Comp )// && sDateTo == sTo && sDateFrom == sFrom)
                     buttonUpdate.Enabled = true;
                 else
                     buttonUpdate.Enabled = false;
@@ -337,6 +384,31 @@ namespace LogAnalyzer2
             }
 
         }
+
+        private void buttonLocalConnect_Click(object sender, EventArgs e)
+        {
+            // Not Connect
+            InputParam param = GetInputParam();
+            LoadDatabase loadDB = new LoadDatabase(param);
+
+            if (loadDB.ReadLocalData() == true)
+            {
+                MessageBox.Show("Read Successful!");
+
+                buttonUpdate.Enabled = true;
+                buttonUpdateStatus = true;
+
+//                Constants.bNodeReadFlg = true;
+
+//                strSearchLang = param.strSearchLang;
+//                strSearchProg = param.strSearchProg;
+
+            }
+            else
+            {
+                MessageBox.Show("Read Error!");
+            }
+        }
 /*
         private void contextMenuStrip1_MouseClick(object sender, MouseEventArgs e)
         {
@@ -349,12 +421,18 @@ namespace LogAnalyzer2
         }
 */
     }
-    static class Constants
+    public static class Constants
     {
 //        static public bool FLG_UPDATE = true;   // ローカル開発用
 //        static public bool FLG_UPDATE = false;   // ローカル開発用
         //        public const bool FLG_UPDATE = false;
+//public static class GlobalVar {
+//    public const string GlobalString = "Important Text";   // グローバル定数
 
+        public const string sSaveFolder = "\\\\192.168.100.226\\LogAnalyzer\\Data\\";
+
+        static public bool bNodeReadFlg = false;
+        static public string sMembDate = "8/15/2008 12:00:00";
         static public bool bDetailFlg = false;
         static public bool bFirstConnect = false;
         static public string sSort = "";
