@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonLocalConnect = new System.Windows.Forms.Button();
             this.buttonConnect = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.comboBoxProduct = new System.Windows.Forms.ComboBox();
+            this.comboBoxCountry = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.dateTimePickerTo = new System.Windows.Forms.DateTimePicker();
             this.dateTimePickerFrom = new System.Windows.Forms.DateTimePicker();
-            this.comboBoxProduct = new System.Windows.Forms.ComboBox();
-            this.comboBoxCountry = new System.Windows.Forms.ComboBox();
             this.buttonUpdate = new System.Windows.Forms.Button();
             this.groupBoxLogType = new System.Windows.Forms.GroupBox();
             this.radioButtonFunctionLog = new System.Windows.Forms.RadioButton();
@@ -54,49 +54,50 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.groupBoxExcelWrite = new System.Windows.Forms.GroupBox();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.listView1 = new System.Windows.Forms.ListView();
             this.groupBox1.SuspendLayout();
             this.groupBoxLogType.SuspendLayout();
             this.groupBoxResult.SuspendLayout();
             this.groupBoxDetail.SuspendLayout();
             this.groupBoxExcelWrite.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.buttonLocalConnect);
             this.groupBox1.Controls.Add(this.buttonConnect);
-            this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.dateTimePickerTo);
-            this.groupBox1.Controls.Add(this.dateTimePickerFrom);
             this.groupBox1.Controls.Add(this.comboBoxProduct);
             this.groupBox1.Controls.Add(this.comboBoxCountry);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1012, 53);
+            this.groupBox1.Size = new System.Drawing.Size(661, 53);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
+            // buttonLocalConnect
+            // 
+            this.buttonLocalConnect.Location = new System.Drawing.Point(558, 18);
+            this.buttonLocalConnect.Name = "buttonLocalConnect";
+            this.buttonLocalConnect.Size = new System.Drawing.Size(92, 23);
+            this.buttonLocalConnect.TabIndex = 12;
+            this.buttonLocalConnect.Text = "Existing Data";
+            this.buttonLocalConnect.UseVisualStyleBackColor = true;
+            this.buttonLocalConnect.Click += new System.EventHandler(this.buttonLocalConnect_Click);
+            // 
             // buttonConnect
             // 
-            this.buttonConnect.Location = new System.Drawing.Point(918, 16);
+            this.buttonConnect.Location = new System.Drawing.Point(447, 17);
             this.buttonConnect.Name = "buttonConnect";
-            this.buttonConnect.Size = new System.Drawing.Size(84, 23);
+            this.buttonConnect.Size = new System.Drawing.Size(92, 23);
             this.buttonConnect.TabIndex = 11;
             this.buttonConnect.Text = "DB Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
             this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(428, 20);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 12);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "Date :";
             // 
             // label3
             // 
@@ -115,33 +116,6 @@
             this.label2.Size = new System.Drawing.Size(51, 12);
             this.label2.TabIndex = 6;
             this.label2.Text = "Country :";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(678, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(10, 12);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "~";
-            // 
-            // dateTimePickerTo
-            // 
-            this.dateTimePickerTo.CustomFormat = "yyyy-mm-dd";
-            this.dateTimePickerTo.Location = new System.Drawing.Point(698, 17);
-            this.dateTimePickerTo.Name = "dateTimePickerTo";
-            this.dateTimePickerTo.Size = new System.Drawing.Size(200, 19);
-            this.dateTimePickerTo.TabIndex = 4;
-            this.dateTimePickerTo.ValueChanged += new System.EventHandler(this.dateTimePickerTo_ValueChanged);
-            // 
-            // dateTimePickerFrom
-            // 
-            this.dateTimePickerFrom.CustomFormat = "yyyy-mm-dd";
-            this.dateTimePickerFrom.Location = new System.Drawing.Point(472, 17);
-            this.dateTimePickerFrom.Name = "dateTimePickerFrom";
-            this.dateTimePickerFrom.Size = new System.Drawing.Size(200, 19);
-            this.dateTimePickerFrom.TabIndex = 2;
-            this.dateTimePickerFrom.ValueChanged += new System.EventHandler(this.dateTimePickerFrom_ValueChanged);
             // 
             // comboBoxProduct
             // 
@@ -171,13 +145,39 @@
             this.comboBoxCountry.TabIndex = 0;
             this.comboBoxCountry.SelectedIndexChanged += new System.EventHandler(this.comboBoxCountry_SelectedIndexChanged);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(56, 49);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(8, 12);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "¦";
+            // 
+            // dateTimePickerTo
+            // 
+            this.dateTimePickerTo.CustomFormat = "yyyy-mm-dd";
+            this.dateTimePickerTo.Location = new System.Drawing.Point(6, 65);
+            this.dateTimePickerTo.Name = "dateTimePickerTo";
+            this.dateTimePickerTo.Size = new System.Drawing.Size(144, 19);
+            this.dateTimePickerTo.TabIndex = 4;
+            this.dateTimePickerTo.ValueChanged += new System.EventHandler(this.dateTimePickerTo_ValueChanged);
+            // 
+            // dateTimePickerFrom
+            // 
+            this.dateTimePickerFrom.CustomFormat = "yyyy-mm-dd";
+            this.dateTimePickerFrom.Location = new System.Drawing.Point(6, 24);
+            this.dateTimePickerFrom.Name = "dateTimePickerFrom";
+            this.dateTimePickerFrom.Size = new System.Drawing.Size(144, 19);
+            this.dateTimePickerFrom.TabIndex = 2;
+            this.dateTimePickerFrom.ValueChanged += new System.EventHandler(this.dateTimePickerFrom_ValueChanged);
+            // 
             // buttonUpdate
             // 
-            this.buttonUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonUpdate.Enabled = false;
-            this.buttonUpdate.Location = new System.Drawing.Point(414, 15);
+            this.buttonUpdate.Location = new System.Drawing.Point(698, 81);
             this.buttonUpdate.Name = "buttonUpdate";
-            this.buttonUpdate.Size = new System.Drawing.Size(85, 23);
+            this.buttonUpdate.Size = new System.Drawing.Size(85, 37);
             this.buttonUpdate.TabIndex = 9;
             this.buttonUpdate.Text = "Update";
             this.buttonUpdate.UseVisualStyleBackColor = true;
@@ -264,27 +264,26 @@
             // 
             this.groupBoxDetail.Controls.Add(this.textBoxUserID);
             this.groupBoxDetail.Controls.Add(this.label6);
-            this.groupBoxDetail.Controls.Add(this.buttonUpdate);
             this.groupBoxDetail.Controls.Add(this.textBoxCompanyName);
             this.groupBoxDetail.Controls.Add(this.label5);
-            this.groupBoxDetail.Location = new System.Drawing.Point(516, 72);
+            this.groupBoxDetail.Location = new System.Drawing.Point(12, 124);
             this.groupBoxDetail.Name = "groupBoxDetail";
-            this.groupBoxDetail.Size = new System.Drawing.Size(508, 46);
+            this.groupBoxDetail.Size = new System.Drawing.Size(487, 46);
             this.groupBoxDetail.TabIndex = 11;
             this.groupBoxDetail.TabStop = false;
             this.groupBoxDetail.Text = "Detail";
             // 
             // textBoxUserID
             // 
-            this.textBoxUserID.Location = new System.Drawing.Point(294, 15);
+            this.textBoxUserID.Location = new System.Drawing.Point(346, 18);
             this.textBoxUserID.Name = "textBoxUserID";
-            this.textBoxUserID.Size = new System.Drawing.Size(100, 19);
+            this.textBoxUserID.Size = new System.Drawing.Size(135, 19);
             this.textBoxUserID.TabIndex = 13;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(234, 20);
+            this.label6.Location = new System.Drawing.Point(286, 23);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(50, 12);
             this.label6.TabIndex = 12;
@@ -292,18 +291,18 @@
             // 
             // textBoxCompanyName
             // 
-            this.textBoxCompanyName.Location = new System.Drawing.Point(118, 17);
+            this.textBoxCompanyName.Location = new System.Drawing.Point(103, 18);
             this.textBoxCompanyName.Name = "textBoxCompanyName";
-            this.textBoxCompanyName.Size = new System.Drawing.Size(100, 19);
+            this.textBoxCompanyName.Size = new System.Drawing.Size(162, 19);
             this.textBoxCompanyName.TabIndex = 11;
             // 
             // progressBar1
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 509);
+            this.progressBar1.Location = new System.Drawing.Point(12, 550);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(1136, 10);
+            this.progressBar1.Size = new System.Drawing.Size(1037, 10);
             this.progressBar1.TabIndex = 12;
             // 
             // buttonSave
@@ -319,7 +318,7 @@
             // groupBoxExcelWrite
             // 
             this.groupBoxExcelWrite.Controls.Add(this.buttonSave);
-            this.groupBoxExcelWrite.Location = new System.Drawing.Point(1030, 72);
+            this.groupBoxExcelWrite.Location = new System.Drawing.Point(679, 124);
             this.groupBoxExcelWrite.Name = "groupBoxExcelWrite";
             this.groupBoxExcelWrite.Size = new System.Drawing.Size(118, 45);
             this.groupBoxExcelWrite.TabIndex = 14;
@@ -332,19 +331,43 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewResult.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewResult.Location = new System.Drawing.Point(12, 124);
+            this.dataGridViewResult.Location = new System.Drawing.Point(12, 177);
             this.dataGridViewResult.Name = "dataGridViewResult";
             this.dataGridViewResult.RowTemplate.Height = 21;
-            this.dataGridViewResult.Size = new System.Drawing.Size(1147, 379);
+            this.dataGridViewResult.Size = new System.Drawing.Size(1048, 367);
             this.dataGridViewResult.TabIndex = 15;
             this.dataGridViewResult.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewResult_CellMouseDoubleClick);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.dateTimePickerTo);
+            this.groupBox2.Controls.Add(this.dateTimePickerFrom);
+            this.groupBox2.Location = new System.Drawing.Point(512, 75);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(161, 95);
+            this.groupBox2.TabIndex = 16;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Date";
+            // 
+            // listView1
+            // 
+            this.listView1.BackColor = System.Drawing.SystemColors.Menu;
+            this.listView1.Location = new System.Drawing.Point(805, 4);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(244, 161);
+            this.listView1.TabIndex = 17;
+            this.listView1.UseCompatibleStateImageBehavior = false;
             // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1160, 521);
+            this.ClientSize = new System.Drawing.Size(1061, 562);
+            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.dataGridViewResult);
             this.Controls.Add(this.groupBoxExcelWrite);
+            this.Controls.Add(this.buttonUpdate);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.groupBoxDetail);
             this.Controls.Add(this.groupBoxResult);
@@ -365,6 +388,8 @@
             this.groupBoxDetail.PerformLayout();
             this.groupBoxExcelWrite.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -380,7 +405,6 @@
         private System.Windows.Forms.ComboBox comboBoxProduct;
         private System.Windows.Forms.ComboBox comboBoxCountry;
         private System.Windows.Forms.Button buttonUpdate;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.GroupBox groupBoxLogType;
         private System.Windows.Forms.RadioButton radioButtonUseLog;
         private System.Windows.Forms.RadioButton radioButtonFunctionLog;
@@ -397,6 +421,9 @@
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.GroupBox groupBoxExcelWrite;
         private System.Windows.Forms.DataGridView dataGridViewResult;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button buttonLocalConnect;
+        private System.Windows.Forms.ListView listView1;
     }
 }
 
